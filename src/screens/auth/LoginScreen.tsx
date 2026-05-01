@@ -1,17 +1,17 @@
-// filepath: src/screens/auth/LoginScreen.tsx
 import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useAuth } from '../../navigation/RootNavigator';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
-
-function LoginScreen({ navigation }: Props) {
+function LoginScreen() {
   const { login } = useAuth();
 
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+
   const handleLogin = () => {
-    // TODO: Implement actual login logic
     login();
   };
 
@@ -19,7 +19,7 @@ function LoginScreen({ navigation }: Props) {
     <View style={styles.container}>
       <Text style={styles.title}>Bayani</Text>
       <Text style={styles.subtitle}>Login to discover your heroic legacy</Text>
-      
+
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -27,20 +27,24 @@ function LoginScreen({ navigation }: Props) {
         autoCapitalize="none"
         keyboardType="email-address"
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#999"
         secureTextEntry
       />
-      
+
       <Button title="Login" onPress={handleLogin} />
-      
-      <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
+
+      {/* navigation is now defined via the hook above */}
+      <Text
+        style={styles.link}
+        onPress={() => navigation.navigate('ForgotPassword')}
+      >
         Forgot Password?
       </Text>
-      
+
       <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
         Don't have an account? Register
       </Text>

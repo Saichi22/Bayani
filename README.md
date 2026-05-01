@@ -1,9 +1,10 @@
-App Idea ( Core Features)
-This app lets you know who's Philippine hero
-you are by answering the following questions
-and by taking a picture of your face. 
 
-This app has 3 core features:
-	1. Personality Test
-	2. Ethnicity/Address - 
-	3. Facial Recognition
+types.ts	Defines route types for Personality Test, Ethnicity/Address, and Facial Recognition flows
+
+RootNavigator.tsx	Manages switching between unauthenticated and authenticated states
+
+AuthNavigator.tsx	Stack for Login/Register - gates access to all 3 core features
+
+MainTabNavigator.tsx	Bottom tabs: Home (central hub), Assessment (Personality Test), Profile
+
+MainNavigator.tsx	Stack navigator for detail screens within the main app

@@ -1,108 +1,86 @@
-﻿import React, { useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-} from 'react-native';
+// filepath: src/screens/auth/LoginScreen.tsx
+import React from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useAuth } from '../../navigation/RootNavigator';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../navigation/types';
 
-const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+
+function LoginScreen({ navigation }: Props) {
+  const { login } = useAuth();
+
+  const handleLogin = () => {
+    // TODO: Implement actual login logic
+    login();
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.formTitle}>Log In</Text>
-      <Text style={styles.label}>Email</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Bayani</Text>
+      <Text style={styles.subtitle}>Login to discover your heroic legacy</Text>
+      
       <TextInput
-        value={email}
-        onChangeText={setEmail}
         style={styles.input}
-        placeholder="hello@reallygreatsite.com"
-        placeholderTextColor="rgba(255,255,255,0.6)"
-        keyboardType="email-address"
+        placeholder="Email"
+        placeholderTextColor="#999"
         autoCapitalize="none"
+        keyboardType="email-address"
       />
-      <Text style={styles.label}>Password</Text>
+      
       <TextInput
-        value={password}
-        onChangeText={setPassword}
         style={styles.input}
-        placeholder="••••••"
-        placeholderTextColor="rgba(255,255,255,0.6)"
+        placeholder="Password"
+        placeholderTextColor="#999"
         secureTextEntry
       />
-      <View style={styles.bottomOptions}>
-        <Text style={styles.checkboxText}>Remember me</Text>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </View>
-      <Pressable style={styles.confirmButton} onPress={() => {}}>
-        <Text style={styles.confirmButtonText}>Confirm</Text>
-      </Pressable>
-      <Text style={styles.footerText}>Don't have an account? Sign up</Text>
-    </ScrollView>
+      
+      <Button title="Login" onPress={handleLogin} />
+      
+      <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
+        Forgot Password?
+      </Text>
+      
+      <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+        Don't have an account? Register
+      </Text>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
   },
-  formTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 20,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 8,
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 30,
+    color: '#666',
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 14,
-    color: '#fff',
+    height: 50,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
   },
-  bottomOptions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  checkboxText: {
-    fontSize: 12,
-    color: '#fff',
-  },
-  forgotText: {
-    fontSize: 12,
-    color: '#fff',
-  },
-  confirmButton: {
-    borderWidth: 1.5,
-    borderColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  confirmButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  footerText: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+  link: {
+    marginTop: 15,
     textAlign: 'center',
+    color: '#007AFF',
+    fontSize: 16,
   },
 });
 

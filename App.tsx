@@ -14,6 +14,11 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <StatusBar barStyle="dark-content" />
-        <RootNavigator />
+        {/* <RootNavigator */}
+        <AuthScreen />
       </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+
 export default App;

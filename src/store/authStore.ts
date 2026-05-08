@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { api, setAuthFailureHandler } from '../api/client';
-import { loadTokens, clearTokens, saveTokens } from '../services/keychain.service';
+import {
+  loadTokens,
+  clearTokens,
+  saveTokens,
+} from '../services/keychain.service';
 
 export interface User {
   id: string;
@@ -25,10 +29,10 @@ interface AuthState {
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
 
 GoogleSignin.configure({
-  webClientId: GOOGLE_WEB_CLIENT_ID
+  webClientId: GOOGLE_WEB_CLIENT_ID,
 });
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>(set => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,

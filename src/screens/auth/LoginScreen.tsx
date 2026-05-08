@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,10 @@ import {
   ImageBackground,
   Alert,
   Image,
+  Keyboard,
+  Animated,
+  Platform,
+  Dimensions,
 } from 'react-native';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigation } from '@react-navigation/native';
@@ -20,17 +24,53 @@ import { COLORS } from '../../styles/colors';
 import { FONTS } from '../../styles/typography';
 
 const bayaniBackground = require('../../assets/images/bayaniBackground.png');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 function LoginScreen() {
   const { signIn, signInWithGoogle } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const formOffset = useRef(new Animated.Value(0)).current;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const show = Keyboard.addListener(showEvent, e => {
+      Animated.spring(formOffset, {
+        toValue: -(e.endCoordinates.height * 0.6),
+        useNativeDriver: true,
+        tension: 60,
+        friction: 10,
+      }).start();
+    });
+
+    const hide = Keyboard.addListener(hideEvent, () => {
+      Animated.spring(formOffset, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 60,
+        friction: 10,
+      }).start();
+    });
+
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
+
   const handleLogin = async () => {
+    Keyboard.dismiss();
     try {
       if (!email || !password) {
         Alert.alert('Error', 'Please fill in all fields');
@@ -56,24 +96,25 @@ function LoginScreen() {
       style={styles.container}
       resizeMode="cover"
     >
+      {/* Title area — completely untouched by keyboard logic */}
       <MaskedView
-        style={{ height: 25, width: '100%' }} // Height should be slightly larger than fontSize
+        style={{ height: 25, width: '100%' }}
         maskElement={
           <Text style={[styles.subtitle, { backgroundColor: 'transparent' }]}>
             Mabuhay
           </Text>
         }
       >
-        {' '}
         <LinearGradient
           colors={['#1e1d6d', '#9b1300']}
-          start={{ x: 0.5, y: 0 }} // Top center
-          end={{ x: 0.5, y: 1 }} // Bottom center
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
           style={{ flex: 1 }}
         />
       </MaskedView>
+
       <MaskedView
-        style={{ height: 85, width: '100%' }} // Height should be slightly larger than fontSize
+        style={{ height: 85, width: '100%' }}
         maskElement={
           <Text style={[styles.title, { backgroundColor: 'transparent' }]}>
             Bayani
@@ -82,99 +123,141 @@ function LoginScreen() {
       >
         <LinearGradient
           colors={['#1e1d6d', '#9b1300']}
-          start={{ x: 0.5, y: 0 }} // Top center
-          end={{ x: 0.5, y: 1 }} // Bottom center
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
           style={{ flex: 1 }}
         />
       </MaskedView>
+
+      {/* Portrait image — completely untouched by keyboard logic */}
       <Image
         source={require('../../assets/images/bayaniPortrait.png')}
         style={styles.overlapImage}
         resizeMode="contain"
       />
-      <LinearGradient
-        colors={['#a03f12', '#ffa074']}
-        start={{ x: 1, y: 1 }} // Top Left
-        end={{ x: 0, y: 0 }} // Bottom Right
-        style={styles.formContainer}
-      >
-        <Text style={styles.formTitle}>Log In</Text>
-        <Text style={styles.TextInput}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="JaneDoe@example.com"
-          placeholderTextColor="#c07e5f"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
 
-        <Text style={styles.TextInput}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="********"
-          placeholderTextColor="#c07e5f"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <View style={styles.rowContainer}>
-          <View style={styles.rememberMeContainer}>
-            <View style={styles.checkboxPlaceholder} />
-            <Text style={styles.rememberMeText}>Remember me</Text>
+      {/* Only the form animates — translateY never affects siblings */}
+      <Animated.View
+        style={[
+          styles.formWrapper,
+          { transform: [{ translateY: formOffset }] },
+        ]}
+      >
+        <LinearGradient
+          colors={['#a03f12', '#ffa074']}
+          start={{ x: 1, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          style={styles.formContainer}
+        >
+          <Text style={styles.formTitle}>Log In</Text>
+
+          {/* Email */}
+          <Text style={styles.inputLabel}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Juan@example.com"
+            placeholderTextColor="#c07e5f"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            returnKeyType="next"
+          />
+
+          {/* Password */}
+          <Text style={styles.inputLabel}>Password</Text>
+          <View style={styles.passwordWrapper}>
+            <TextInput
+              style={[styles.input, { flex: 1, marginBottom: 0 }]}
+              placeholder="••••••••"
+              placeholderTextColor="#c07e5f"
+              secureTextEntry={!isPasswordVisible}
+              value={password}
+              onChangeText={setPassword}
+              returnKeyType="done"
+              onSubmitEditing={handleLogin}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              <Icon
+                name={isPasswordVisible ? 'eye' : 'eye-slash'}
+                size={16}
+                color="#c07e5f"
+              />
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-          style={[
-            styles.customButton,
-            {
-              width: '50%',
-              alignSelf: 'center',
-            },
-          ]}
-          onPress={handleLogin}
-        >
-          <Text style={styles.buttonText}>Confirm</Text>
-        </TouchableOpacity>
-        <View style={styles.dividerContainer}>
-          <View style={styles.line} />
-          <Text style={styles.orText}>or</Text>
-          <View style={styles.line} />
-        </View>
+          {/* Remember me + Forgot password */}
+          <View style={styles.rowContainer}>
+            <TouchableOpacity
+              style={styles.rememberMeContainer}
+              onPress={() => setRememberMe(!rememberMe)}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[styles.checkbox, rememberMe && styles.checkboxChecked]}
+              >
+                {rememberMe && <Icon name="check" size={11} color="#fff" />}
+              </View>
+              <Text style={styles.rememberMeText}>Remember me</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.customButton, { marginBottom: 10 }]}
-          onPress={handleGoogleLogin}
-        >
-          <Icon
-            name="google"
-            size={20}
-            color="white"
-            style={{ marginRight: 10 }}
-          />
-          <Text
-            style={[styles.buttonText, { fontFamily: FONTS.PoppinsRegular }]}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPassword')}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Confirm button */}
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={handleLogin}
+            activeOpacity={0.8}
           >
-            Sign in with Google
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.signupContainer}
-          onPress={() => navigation.navigate('Register')}
-        >
-          <Text style={styles.footerText}>
-            Don’t have an account?{' '}
-            <Text style={styles.signupLink}>Sign up</Text>
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
+            <Text style={styles.buttonText}>Confirm</Text>
+          </TouchableOpacity>
+
+          {/* Divider */}
+          <View style={styles.dividerContainer}>
+            <View style={styles.line} />
+            <Text style={styles.orText}>or</Text>
+            <View style={styles.line} />
+          </View>
+
+          {/* Google sign in */}
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleGoogleLogin}
+            activeOpacity={0.8}
+          >
+            <Icon
+              name="google"
+              size={18}
+              color="white"
+              style={{ marginRight: 10 }}
+            />
+            <Text
+              style={[styles.buttonText, { fontFamily: FONTS.PoppinsRegular }]}
+            >
+              Sign in with Google
+            </Text>
+          </TouchableOpacity>
+
+          {/* Sign up link */}
+          <TouchableOpacity
+            style={styles.signupContainer}
+            onPress={() => navigation.navigate('Register')}
+          >
+            <Text style={styles.footerText}>
+              Don't have an account?{' '}
+              <Text style={styles.signupLink}>Sign up</Text>
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </Animated.View>
     </ImageBackground>
   );
 }
@@ -192,23 +275,30 @@ const styles = StyleSheet.create({
   overlapImage: {
     width: 1400,
     height: 1300,
-    top: '10%',
-    marginTop: -600, // Adjust to overlap the form
-    marginBottom: -650, // Adjust to overlap the form
-    zIndex: 1, // Keeps it below the form if needed, but order handles this
+    top: '-15%',
+    marginTop: -390,
+    marginBottom: -400,
+    zIndex: 1,
+  },
+
+  // Wrapper handles positioning; formContainer handles only visuals
+  formWrapper: {
+    width: '100%',
+    position: 'absolute',
+    bottom: -90,
+    zIndex: 2,
   },
   formContainer: {
-    backgroundColor: COLORS.primaryLight,
-    borderTopLeftRadius: 50, // Rounded top corners
+    borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     paddingHorizontal: 50,
-    paddingTop: 10,
+    paddingTop: 18,
+    paddingBottom: 10,
     width: '100%',
-    height: '70%',
-    top: '38%',
-    marginTop: -170,
-    zIndex: 2, // Ensures it appears above the background and image
+    // height is driven by content — no fixed top/marginTop needed
+    minHeight: SCREEN_HEIGHT * 0.61,
   },
+
   title: {
     fontFamily: FONTS.kawitBold,
     fontSize: 85,
@@ -223,99 +313,131 @@ const styles = StyleSheet.create({
   },
   formTitle: {
     fontFamily: FONTS.PoppinsBold,
-    fontSize: 38,
-    marginBottom: -5,
+    fontSize: 36,
+    marginBottom: 8,
     color: COLORS.textContrast,
   },
-  TextInput: {
+  inputLabel: {
     fontFamily: FONTS.PoppinsRegular,
-    fontSize: 16,
-    marginBottom: 3,
+    fontSize: 14,
+    marginBottom: 4,
     color: COLORS.textContrast,
   },
   input: {
-    height: 50,
+    height: 48,
     borderWidth: 1,
     borderColor: COLORS.secondary,
-    borderRadius: 15,
+    borderRadius: 14,
     backgroundColor: COLORS.secondary,
     paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    marginBottom: 12,
+    fontSize: 15,
+    color: '#3a1a0a',
+  },
+  passwordWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 14,
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 4,
   },
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 15, // Space before the Confirm button
-    marginTop: -5, // Pull it slightly closer to the password input
+    marginBottom: 14,
+    marginTop: -2,
   },
   rememberMeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  checkboxPlaceholder: {
+  checkbox: {
     width: 20,
     height: 20,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#fff',
-    borderRadius: 4,
+    borderRadius: 5,
     marginRight: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Subtle fill
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    borderColor: '#fff',
   },
   rememberMeText: {
     color: '#fff',
-    fontFamily: 'Poppins-Regular',
+    fontFamily: FONTS.PoppinsRegular,
     fontSize: 12,
   },
   forgotPasswordText: {
     color: '#fff',
-    fontFamily: 'Poppins-Regular',
+    fontFamily: FONTS.PoppinsRegular,
     fontSize: 12,
+    textDecorationLine: 'underline',
+  },
+  confirmButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: '#fff',
+    paddingVertical: 10,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '52%',
+    alignSelf: 'center',
+    marginBottom: 4,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5, // Adjust space above and below the divider
+    marginVertical: 10,
     width: '100%',
   },
   line: {
-    flex: 1, // This makes the line take up all available horizontal space
-    height: 1, // Thickness of the line
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.45)',
   },
   orText: {
     marginHorizontal: 10,
     color: '#fff',
-    fontFamily: FONTS.PoppinsRegular, // Using your Poppins font
-    fontSize: 14,
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 13,
   },
-  customButton: {
+  googleButton: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#fff',
-    paddingVertical: 7,
-    borderRadius: 15,
+    paddingVertical: 10,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-
     width: '100%',
+    marginBottom: 12,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontFamily: FONTS.PoppinsBold, // Using your new Poppins font!
-    fontSize: 16,
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 15,
   },
   signupContainer: {
-    paddingBottom: 20,
     alignItems: 'center',
+    paddingBottom: 12,
   },
   footerText: {
-    color: 'rgba(255, 255, 255, 0.8)', // Slightly dimmed white
+    color: 'rgba(255,255,255,0.8)',
     fontFamily: FONTS.PoppinsRegular,
-    fontSize: 14,
+    fontSize: 13,
   },
   signupLink: {
     color: '#fff',

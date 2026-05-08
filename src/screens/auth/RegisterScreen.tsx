@@ -17,6 +17,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 import { COLORS } from '../../styles/colors';
@@ -76,6 +77,9 @@ function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
 
   const formOffset = useRef(new Animated.Value(0)).current;
   const navigation =
@@ -116,11 +120,9 @@ function RegisterScreen() {
 
   // ── Submit ────────────────────────────────────────────────────────────────
   const handleRegister = async () => {
-    console.log('BUTTON PRESSED', { name, email, password, confirmPassword });
     Keyboard.dismiss();
 
     const fieldErrors = validate(name, email, password, confirmPassword);
-    console.log('VALIDATION ERRORS:', fieldErrors);
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
       return;
@@ -130,11 +132,19 @@ function RegisterScreen() {
     setIsSubmitting(true);
 
     try {
+      // 1. Call your register action from useAuthStore
       await register(email, password, name);
+
+      // 2. Navigate to Login
+      // .reset ensures the 'Register' screen is removed from the stack
       navigation.reset({
         index: 0,
         routes: [{ name: 'Login' }],
       });
+
+      // Optional: If you want to auto-fill the email on the Login screen,
+      // you could pass it as a param:
+      // navigation.navigate('Login', { registeredEmail: email });
     } catch (err: any) {
       const message =
         err?.response?.data?.message ||
@@ -258,36 +268,66 @@ function RegisterScreen() {
 
             {/* ── Password ── */}
             <Text style={styles.inputLabel}>Password</Text>
-            <TextInput
-              style={inputStyle('password')}
-              placeholder="Min. 8 characters"
-              placeholderTextColor="#c07e5f"
-              secureTextEntry
-              value={password}
-              onChangeText={text => {
-                setPassword(text);
-                if (errors.password)
-                  setErrors(e => ({ ...e, password: undefined }));
-              }}
-            />
+            <View style={styles.passwordWrapper}>
+              <TextInput
+                style={[inputStyle('password'), { flex: 1, marginBottom: 0 }]} // Added flex and removed margin
+                placeholder="Min. 8 characters"
+                placeholderTextColor="#c07e5f"
+                secureTextEntry={!isPasswordVisible} // Change: This now toggles
+                value={password}
+                onChangeText={text => {
+                  setPassword(text);
+                  if (errors.password)
+                    setErrors(e => ({ ...e, password: undefined }));
+                }}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                <Icon
+                  name={isPasswordVisible ? 'eye' : 'eye-slash'}
+                  size={16}
+                  color="#c07e5f"
+                />
+              </TouchableOpacity>
+            </View>
             {errors.password ? (
               <Text style={styles.errorText}>{errors.password}</Text>
             ) : null}
 
             {/* ── Confirm Password ── */}
             <Text style={styles.inputLabel}>Confirm Password</Text>
-            <TextInput
-              style={inputStyle('confirmPassword')}
-              placeholder="Repeat your password"
-              placeholderTextColor="#c07e5f"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={text => {
-                setConfirmPassword(text);
-                if (errors.confirmPassword)
-                  setErrors(e => ({ ...e, confirmPassword: undefined }));
-              }}
-            />
+            <View style={styles.passwordWrapper}>
+              <TextInput
+                style={[
+                  inputStyle('confirmPassword'),
+                  { flex: 1, marginBottom: 0 },
+                ]}
+                placeholder="Repeat your password"
+                placeholderTextColor="#c07e5f"
+                secureTextEntry={!isConfirmPasswordVisible}
+                value={confirmPassword}
+                onChangeText={text => {
+                  setConfirmPassword(text);
+                  if (errors.confirmPassword)
+                    setErrors(e => ({ ...e, confirmPassword: undefined }));
+                }}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() =>
+                  setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+                }
+              >
+                <Icon
+                  name={isConfirmPasswordVisible ? 'eye' : 'eye-slash'}
+                  size={16}
+                  color="#c07e5f"
+                />
+              </TouchableOpacity>
+            </View>
+
             {errors.confirmPassword ? (
               <Text style={styles.errorText}>{errors.confirmPassword}</Text>
             ) : null}
@@ -389,11 +429,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 4,
     fontSize: 14,
-    color: '#3a1a0a',
+    color: COLORS.textPrimary,
   },
   inputError: {
     borderColor: '#ff4444',
     borderWidth: 1.5,
+  },
+  passwordWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 14,
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 4,
   },
   errorText: {
     color: '#ffe0d0',

@@ -54,11 +54,12 @@ export const useAuthStore = create<AuthState>(set => ({
   register: async (email, password, name) => {
     try {
       const res = await api.post('/auth/register', { email, password, name });
-      await saveTokens({
-        accessToken: res.data.accessToken,
-        refreshToken: res.data.refreshToken,
-      });
-      set({ user: res.data.user, isAuthenticated: true });
+      // Uncomment if your backend returns tokens immediately after registration
+      // await saveTokens({
+      //   accessToken: res.data.accessToken,
+      //   refreshToken: res.data.refreshToken,
+      // });
+      // set({ user: res.data.user, isAuthenticated: true });
     } catch (error) {
       console.error('Registration Error:', error);
       throw error;

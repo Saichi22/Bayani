@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 12,
     fontSize: 15,
-    color: '#3a1a0a',
+    color: COLORS.textPrimary,
   },
   passwordWrapper: {
     flexDirection: 'row',

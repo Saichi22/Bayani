@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { api, setAuthFailureHandler } from '../api/client';
-import { loadTokens, clearTokens } from '../services/keychain.service';
+import {
+  loadTokens,
+  clearTokens,
+  saveTokens,
+} from '../services/keychain.service';
 
 export interface User {
   id: string;
@@ -15,18 +19,52 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
 }
 
-// Ensure you configure this with your actual Web Client ID before using
-// GoogleSignin.configure({ webClientId: 'YOUR_WEB_CLIENT_ID' });
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
 
-export const useAuthStore = create<AuthState>((set) => ({
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
+
+export const useAuthStore = create<AuthState>(set => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
+
+  signIn: async (email, password) => {
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      await saveTokens({
+        accessToken: res.data.accessToken,
+        refreshToken: res.data.refreshToken,
+      });
+      set({ user: res.data.user, isAuthenticated: true });
+    } catch (error) {
+      console.error('Sign-In Error:', error);
+      throw error;
+    }
+  },
+
+  register: async (email, password, name) => {
+    try {
+      const res = await api.post('/auth/register', { email, password, name });
+      // Uncomment if your backend returns tokens immediately after registration
+      // await saveTokens({
+      //   accessToken: res.data.accessToken,
+      //   refreshToken: res.data.refreshToken,
+      // });
+      // set({ user: res.data.user, isAuthenticated: true });
+    } catch (error) {
+      console.error('Registration Error:', error);
+      throw error;
+    }
+  },
 
   signInWithGoogle: async () => {
     try {
@@ -37,11 +75,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (!idToken) throw new Error('No ID token from Google');
 
       const res = await api.post('/auth/google', { idToken });
-      
-      // Tokens are already saved in keychain via the API client response if we did it there,
-      // actually wait, we need to save them. The client.ts doesn't auto-save on login.
-      // Let's import saveTokens and do it here or update client.ts to handle it.
-      const { saveTokens } = await import('../services/keychain.service');
+
       await saveTokens({
         accessToken: res.data.accessToken,
         refreshToken: res.data.refreshToken,
@@ -63,7 +97,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (e) {
       // Ignore network errors on logout
     }
-    
+
     await clearTokens();
     await GoogleSignin.signOut();
     set({ user: null, isAuthenticated: false });
@@ -76,7 +110,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ isLoading: false, isAuthenticated: false });
         return;
       }
-      
+
       const res = await api.get('/auth/me');
       set({ user: res.data, isAuthenticated: true, isLoading: false });
     } catch (error) {

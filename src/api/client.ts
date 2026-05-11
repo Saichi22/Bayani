@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Platform } from 'react-native';
 import { clearTokens, loadTokens, saveTokens } from '../services/keychain.service';
+import { API_URL } from '@env';
 
-export const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+export const BASE_URL = API_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000');
 
 interface RetriableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -71,12 +72,12 @@ async function doRefresh(): Promise<string> {
     const response = await axios.post(`${BASE_URL}/auth/refresh`, {
       refreshToken: tokens.refreshToken,
     });
-    
+
     await saveTokens({
       accessToken: response.data.accessToken,
       refreshToken: response.data.refreshToken,
     });
-    
+
     return response.data.accessToken;
   } catch (err) {
     await handleAuthFailure();

@@ -10,26 +10,26 @@ type Props = NativeStackScreenProps<MainStackParamList, 'PersonalityTest'>;
 const sampleQuestions = [
   {
     id: 1,
-    question: "During a conflict, you prefer to:",
+    question: 'During a conflict, you prefer to:',
     options: [
-      { label: "Lead from the frontlines", value: "warrior" },
-      { label: "Command from behind the lines", value: "strategist" },
+      { label: 'Lead from the frontlines', value: 'warrior' },
+      { label: 'Command from behind the lines', value: 'strategist' },
     ],
   },
   {
     id: 2,
-    question: "When faced with injustice, you:",
+    question: 'When faced with injustice, you:',
     options: [
-      { label: "Take immediate action", value: "action" },
-      { label: "Plan a careful response", value: "calculated" },
+      { label: 'Take immediate action', value: 'action' },
+      { label: 'Plan a careful response', value: 'calculated' },
     ],
   },
   {
     id: 3,
-    question: "Your strength lies in:",
+    question: 'Your strength lies in:',
     options: [
-      { label: "Physical courage", value: "brave" },
-      { label: "Mental fortitude", value: "wise" },
+      { label: 'Physical courage', value: 'brave' },
+      { label: 'Mental fortitude', value: 'wise' },
     ],
   },
 ];
@@ -57,9 +57,9 @@ function PersonalityTestScreen({ navigation }: Props) {
       <Text style={styles.progress}>
         Question {currentQuestion + 1} of {sampleQuestions.length}
       </Text>
-      
+
       <Text style={styles.question}>{question.question}</Text>
-      
+
       <View style={styles.options}>
         {question.options.map((option, index) => (
           <Button

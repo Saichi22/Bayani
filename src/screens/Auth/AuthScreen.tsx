@@ -61,16 +61,10 @@ export default function AuthScreen() {
 
       {/* Buttons */}
       <View style={styles.buttonRow}>
-        <Pressable
-          style={styles.button}
-          onPress={() => openModal('login')}
-        >
+        <Pressable style={styles.button} onPress={() => openModal('login')}>
           <Text style={styles.buttonText}>LOG-IN</Text>
         </Pressable>
-        <Pressable
-          style={styles.button}
-          onPress={() => openModal('signup')}
-        >
+        <Pressable style={styles.button} onPress={() => openModal('signup')}>
           <Text style={styles.buttonText}>SIGN-UP</Text>
         </Pressable>
       </View>
@@ -166,7 +160,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   heroImage: {
-    width: width,           // full screen width, edge-to-edge
+    width: width, // full screen width, edge-to-edge
     height: height * 0.42, // ~42% of screen height
     // no margin/padding — flush to the bottom
   },

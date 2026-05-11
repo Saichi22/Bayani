@@ -3,7 +3,16 @@ import { Platform } from 'react-native';
 import { clearTokens, loadTokens, saveTokens } from '../services/keychain.service';
 import { API_URL } from '@env';
 
-export const BASE_URL = API_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000');
+const DEFAULT_BASE_URL =
+  Platform.OS === 'android'
+    ? 'http://10.0.2.2:3000/api'
+    : 'http://127.0.0.1:3000/api';
+
+export const BASE_URL = API_URL?.trim().replace(/\/$/, '') || DEFAULT_BASE_URL;
+
+if (__DEV__) {
+  console.log('[API] BASE_URL =', BASE_URL);
+}
 
 interface RetriableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -35,6 +44,15 @@ api.interceptors.response.use(
     const original = error.config as RetriableConfig;
     const status = error.response?.status;
     const url = original?.url || '';
+
+    if (__DEV__) {
+      console.log('[API] response error', {
+        message: error.message,
+        url: original?.baseURL ? `${original.baseURL}${url}` : url,
+        status,
+        responseData: error.response?.data,
+      });
+    }
 
     // Ignore if this was an auth entry request
     const isAuthPath = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/refresh') || url.includes('/auth/google');

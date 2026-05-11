@@ -1,11 +1,12 @@
 // filepath: src/screens/main/PersonalityTestScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigation/types';
@@ -56,33 +57,24 @@ const sampleQuestions = [
   },
 ];
 
-const ORANGE = '#FF8C42';
-const LIGHT_ORANGE = '#FFE5D5';
+const ORANGE = '#D4704A';
+const LIGHT_ORANGE = '#F2DDD4';
+const ORANGE_DARK = '#C05A35';
 
 const screenSteps = [
-  { id: 'test', label: 'Test', screen: 'PersonalityTest' },
-  { id: 'demographic', label: 'Demographic', screen: 'DemographicProfile' },
-  { id: 'camera', label: 'Camera', screen: 'Camera' },
-  { id: 'result', label: 'Result', screen: 'HeroResult' },
+  { id: 'test', label: 'Test' },
+  { id: 'demographic', label: 'Demographic' },
+  { id: 'camera', label: 'Camera' },
+  { id: 'result', label: 'Result' },
 ];
+const CURRENT_SCREEN_INDEX = 0;
 
 function PersonalityTestScreen({ navigation }: Props) {
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const currentScreenIndex = 0; // We're on the Test screen (first step)
+  const scrollRef = useRef<ScrollView>(null);
 
   const handleAnswer = (questionId: number, value: string) => {
-    setAnswers({ ...answers, [questionId]: value });
-  };
-
-  const handleNext = () => {
-    if (answers[sampleQuestions[currentQuestion].id]) {
-      setCurrentQuestion((prev) => Math.min(prev + 1, sampleQuestions.length - 1));
-    }
-  };
-
-  const handlePrevious = () => {
-    setCurrentQuestion((prev) => Math.max(prev - 1, 0));
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleSubmit = () => {
@@ -93,132 +85,177 @@ function PersonalityTestScreen({ navigation }: Props) {
 
   const answeredCount = Object.keys(answers).length;
   const progressPercentage = (answeredCount / sampleQuestions.length) * 100;
-  const question = sampleQuestions[currentQuestion];
+  const allAnswered = answeredCount === sampleQuestions.length;
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>←</Text>
+        <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
+          <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.submitButton, answeredCount !== sampleQuestions.length && styles.submitButtonDisabled]}
+          style={[styles.submitButton, !allAnswered && styles.submitButtonDisabled]}
           onPress={handleSubmit}
-          disabled={answeredCount !== sampleQuestions.length}
+          disabled={!allAnswered}
         >
-          <Text style={[styles.submitText, answeredCount !== sampleQuestions.length && styles.submitTextDisabled]}>
+          <Text style={[styles.submitText, !allAnswered && styles.submitTextDisabled]}>
             Submit
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.progressContainer}>
-        <Text style={styles.stepLabel}>
-          Screen {currentScreenIndex + 1} of {screenSteps.length}
-        </Text>
-
+      {/* Screen Step Indicators */}
+      <View style={styles.stepsContainer}>
         <View style={styles.stepRow}>
           {screenSteps.map((step, index) => {
-            const isActive = index === currentScreenIndex;
-            const isCompleted = index < currentScreenIndex;
-            const answeredCount = Object.keys(answers).length;
-            const allAnswered = answeredCount === sampleQuestions.length;
-            const allowClick = index <= currentScreenIndex && (index === 0 || allAnswered);
-
+            const isActive = index === CURRENT_SCREEN_INDEX;
+            const isCompleted = index < CURRENT_SCREEN_INDEX;
             return (
-              <TouchableOpacity
-                key={step.id}
-                style={[
+              <View key={step.id} style={styles.stepItem}>
+                <View style={[
                   styles.stepCircle,
                   isActive && styles.stepCircleActive,
-                  isCompleted && !isActive && styles.stepCircleCompleted,
-                  !allowClick && styles.stepCircleDisabled,
-                ]}
-                onPress={() => allowClick && navigation.navigate(step.screen as never)}
-                disabled={!allowClick}
-              >
-                <Text
-                  style={[
+                  isCompleted && styles.stepCircleCompleted,
+                ]}>
+                  <Text style={[
                     styles.stepCircleText,
                     (isActive || isCompleted) && styles.stepCircleTextActive,
-                  ]}
-                >
-                  {index + 1}
-                </Text>
-              </TouchableOpacity>
+                  ]}>
+                    {index + 1}
+                  </Text>
+                </View>
+                {index < screenSteps.length - 1 && (
+                  <View style={[
+                    styles.stepConnector,
+                    isCompleted && styles.stepConnectorCompleted,
+                  ]} />
+                )}
+              </View>
             );
           })}
         </View>
+      </View>
 
+      {/* Progress Bar */}
+      <View style={styles.progressContainer}>
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBar, { width: `${(currentScreenIndex / (screenSteps.length - 1)) * 100}%` }]} />
-          {screenSteps.slice(1).map((_, index) => (
-            <View
-              key={`marker-${index}`}
-              style={[
-                styles.progressMarker,
-                { left: `${((index + 1) / screenSteps.length) * 100}%` },
-              ]}
-            />
-          ))}
+          <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
         </View>
         <Text style={styles.progressText}>
-          Test Progress: {Object.keys(answers).length}/{sampleQuestions.length} Answered
+          {answeredCount}/{sampleQuestions.length} Answered
         </Text>
       </View>
 
-      <View style={styles.questionWrapper}>
-        <View style={styles.questionCard}>
-          <Text style={styles.questionText}>{question.question}</Text>
+      {/* Scrollable Question List */}
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {sampleQuestions.map((question, index) => {
+          const isAnswered = !!answers[question.id];
+          const isLast = index === sampleQuestions.length - 1;
 
-          <TouchableOpacity
-            style={[
-              styles.optionButton,
-              answers[question.id] === question.valueA && styles.optionButtonSelected,
-            ]}
-            onPress={() => handleAnswer(question.id, question.valueA)}
-          >
-            <View style={styles.optionHeader}>
-              <Text style={styles.optionLabel}>A</Text>
-              {answers[question.id] === question.valueA && <Text style={styles.checkmark}>✓</Text>}
+          return (
+            <View key={question.id} style={styles.questionRow}>
+              {/* Number + Dotted Line Column */}
+              <View style={styles.sideColumn}>
+                <View style={[
+                  styles.numberCircle,
+                  isAnswered && styles.numberCircleAnswered,
+                ]}>
+                  <Text style={[
+                    styles.numberText,
+                    isAnswered && styles.numberTextAnswered,
+                  ]}>
+                    {index + 1}
+                  </Text>
+                </View>
+                {!isLast && <View style={styles.dottedLine} />}
+              </View>
+
+              {/* Question Card */}
+              <View style={styles.cardColumn}>
+                <View style={[
+                  styles.questionCard,
+                  isAnswered && styles.questionCardAnswered,
+                ]}>
+                  <Text style={styles.questionText}>{question.question}</Text>
+
+                  {/* Option A */}
+                  <TouchableOpacity
+                    style={[
+                      styles.optionButton,
+                      answers[question.id] === question.valueA && styles.optionButtonSelected,
+                    ]}
+                    onPress={() => handleAnswer(question.id, question.valueA)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.optionInner}>
+                      <View style={[
+                        styles.optionBadge,
+                        answers[question.id] === question.valueA && styles.optionBadgeSelected,
+                      ]}>
+                        <Text style={[
+                          styles.optionBadgeText,
+                          answers[question.id] === question.valueA && styles.optionBadgeTextSelected,
+                        ]}>A</Text>
+                      </View>
+                      <Text style={[
+                        styles.optionText,
+                        answers[question.id] === question.valueA && styles.optionTextSelected,
+                      ]}>
+                        {question.optionA}
+                      </Text>
+                      {answers[question.id] === question.valueA && (
+                        <Text style={styles.checkmark}>✓</Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+
+                  {/* Option B */}
+                  <TouchableOpacity
+                    style={[
+                      styles.optionButton,
+                      answers[question.id] === question.valueB && styles.optionButtonSelected,
+                    ]}
+                    onPress={() => handleAnswer(question.id, question.valueB)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.optionInner}>
+                      <View style={[
+                        styles.optionBadge,
+                        answers[question.id] === question.valueB && styles.optionBadgeSelected,
+                      ]}>
+                        <Text style={[
+                          styles.optionBadgeText,
+                          answers[question.id] === question.valueB && styles.optionBadgeTextSelected,
+                        ]}>B</Text>
+                      </View>
+                      <Text style={[
+                        styles.optionText,
+                        answers[question.id] === question.valueB && styles.optionTextSelected,
+                      ]}>
+                        {question.optionB}
+                      </Text>
+                      {answers[question.id] === question.valueB && (
+                        <Text style={styles.checkmark}>✓</Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Spacer below card before next question */}
+                {!isLast && <View style={{ height: 16 }} />}
+              </View>
             </View>
-            <Text style={styles.optionText}>{question.optionA}</Text>
-          </TouchableOpacity>
+          );
+        })}
 
-          <TouchableOpacity
-            style={[
-              styles.optionButton,
-              answers[question.id] === question.valueB && styles.optionButtonSelected,
-            ]}
-            onPress={() => handleAnswer(question.id, question.valueB)}
-          >
-            <View style={styles.optionHeader}>
-              <Text style={styles.optionLabel}>B</Text>
-              {answers[question.id] === question.valueB && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.optionText}>{question.optionB}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.navigationButtons}>
-        <TouchableOpacity
-          style={[styles.navButton, currentQuestion === 0 && styles.navButtonDisabled]}
-          onPress={handlePrevious}
-          disabled={currentQuestion === 0}
-        >
-          <Text style={[styles.navButtonText, currentQuestion === 0 && styles.navButtonTextDisabled]}>Previous</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.navButton, !answers[question.id] && styles.navButtonDisabled]}
-          onPress={currentQuestion === sampleQuestions.length - 1 ? handleSubmit : handleNext}
-          disabled={!answers[question.id]}
-        >
-          <Text style={[styles.navButtonText, !answers[question.id] && styles.navButtonTextDisabled]}>
-            {currentQuestion === sampleQuestions.length - 1 ? 'Submit' : 'Next'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={{ height: 32 }} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -228,91 +265,71 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF5F0',
   },
+
+  /* ── Header ── */
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    paddingVertical: 14,
+    backgroundColor: 'transparent',
   },
-  backButton: {
-    fontSize: 28,
-    color: ORANGE,
+  backCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: ORANGE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backArrow: {
+    fontSize: 22,
+    color: '#fff',
     fontWeight: 'bold',
+    lineHeight: 26,
   },
   submitButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
     borderWidth: 2,
     borderColor: ORANGE,
-    borderRadius: 20,
+    backgroundColor: 'transparent',
   },
   submitButtonDisabled: {
-    borderColor: '#eee',
+    borderColor: '#ccc',
   },
   submitText: {
     color: ORANGE,
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontWeight: '700',
+    fontSize: 15,
   },
   submitTextDisabled: {
-    color: '#ccc',
+    color: '#bbb',
   },
-  progressContainer: {
+
+  /* ── Screen Steps ── */
+  stepsContainer: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-  },
-  stepLabel: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 8,
-  },
-  progressBarBackground: {
-    position: 'relative',
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#f1f1f1',
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressBar: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: ORANGE,
-  },
-  progressMarker: {
-    position: 'absolute',
-    top: -4,
-    width: 2,
-    height: 16,
-    backgroundColor: '#fff',
-    borderColor: '#eee',
-    borderWidth: 1,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#999',
-    textAlign: 'right',
-    marginTop: 8,
+    paddingBottom: 10,
+    paddingTop: 2,
   },
   stepRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+  },
+  stepItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   stepCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     borderWidth: 2,
-    borderColor: '#eee',
+    borderColor: '#DDD',
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -325,100 +342,179 @@ const styles = StyleSheet.create({
     borderColor: ORANGE,
     backgroundColor: LIGHT_ORANGE,
   },
-  stepCircleDisabled: {
-    opacity: 0.4,
-  },
   stepCircleText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#888',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#aaa',
   },
   stepCircleTextActive: {
     color: '#fff',
   },
-  questionWrapper: {
+  stepConnector: {
     flex: 1,
+    height: 2,
+    backgroundColor: '#DDD',
+    marginHorizontal: 4,
+  },
+  stepConnectorCompleted: {
+    backgroundColor: ORANGE,
+  },
+
+  /* ── Progress Bar ── */
+  progressContainer: {
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  progressBarBackground: {
+    height: 10,
+    borderRadius: 6,
+    backgroundColor: '#E8D5CC',
+    overflow: 'hidden',
+    marginBottom: 6,
+  },
+  progressBar: {
+    height: '100%',
+    borderRadius: 6,
+    backgroundColor: ORANGE,
+  },
+  progressText: {
+    fontSize: 13,
+    color: ORANGE,
+    fontWeight: '600',
+    textAlign: 'right',
+  },
+
+  /* ── Scroll ── */
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+
+  /* ── Question Row (number + card) ── */
+  questionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+
+  /* ── Side Column (number bubble + dotted line) ── */
+  sideColumn: {
+    width: 44,
+    alignItems: 'center',
+    paddingTop: 4,
+  },
+  numberCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#C4A090',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  numberCircleAnswered: {
+    backgroundColor: ORANGE,
+  },
+  numberText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  numberTextAnswered: {
+    color: '#fff',
+  },
+  dottedLine: {
+    width: 2,
+    flex: 1,
+    minHeight: 28,
+    borderLeftWidth: 2,
+    borderLeftColor: '#C4A090',
+    borderStyle: 'dashed',
+    marginTop: 4,
+    marginBottom: -4,
+  },
+
+  /* ── Card Column ── */
+  cardColumn: {
+    flex: 1,
+    marginLeft: 10,
   },
   questionCard: {
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 22,
-    borderWidth: 2,
+    borderRadius: 18,
+    padding: 18,
+    borderWidth: 1.5,
+    borderColor: '#E8D0C8',
+    shadowColor: '#C4A090',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  questionCardAnswered: {
     borderColor: ORANGE,
   },
   questionText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 24,
-    color: '#333',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#2D1A10',
+    marginBottom: 16,
+    lineHeight: 24,
   },
+
+  /* ── Options ── */
   optionButton: {
-    borderWidth: 2,
-    borderColor: '#ddd',
+    borderWidth: 1.5,
+    borderColor: '#DDD',
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 14,
-    backgroundColor: '#f9f9f9',
+    padding: 12,
+    marginBottom: 10,
+    backgroundColor: '#FAFAFA',
   },
   optionButtonSelected: {
     backgroundColor: LIGHT_ORANGE,
     borderColor: ORANGE,
   },
-  optionHeader: {
+  optionInner: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
   },
-  optionLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: ORANGE,
-    backgroundColor: LIGHT_ORANGE,
+  optionBadge: {
     width: 28,
     height: 28,
-    borderRadius: 6,
-    textAlign: 'center',
-    lineHeight: 28,
+    borderRadius: 8,
+    backgroundColor: '#EEE',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
-  checkmark: {
-    fontSize: 20,
+  optionBadgeSelected: {
+    backgroundColor: LIGHT_ORANGE,
+  },
+  optionBadgeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#888',
+  },
+  optionBadgeTextSelected: {
     color: ORANGE,
-    fontWeight: 'bold',
   },
   optionText: {
-    fontSize: 15,
-    color: '#666',
-    lineHeight: 22,
-  },
-  navigationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#fff',
-  },
-  navButton: {
     flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: ORANGE,
-    backgroundColor: '#fff',
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
-  navButtonDisabled: {
-    borderColor: '#eee',
-    backgroundColor: '#fafafa',
+  optionTextSelected: {
+    color: ORANGE_DARK,
+    fontWeight: '600',
   },
-  navButtonText: {
-    color: ORANGE,
-    fontWeight: 'bold',
-  },
-  navButtonTextDisabled: {
-    color: '#ccc',
+  checkmark: {
+    fontSize: 18,
+    color: '#4CAF50',
+    marginLeft: 6,
   },
 });
 

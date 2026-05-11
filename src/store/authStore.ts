@@ -60,8 +60,14 @@ export const useAuthStore = create<AuthState>(set => ({
       //   refreshToken: res.data.refreshToken,
       // });
       // set({ user: res.data.user, isAuthenticated: true });
-    } catch (error) {
-      console.error('Registration Error:', error);
+    } catch (error: any) {
+      if (__DEV__) {
+        console.error('Registration Error:', {
+          message: error?.message,
+          response: error?.response?.data,
+          request: error?.config,
+        });
+      }
       throw error;
     }
   },

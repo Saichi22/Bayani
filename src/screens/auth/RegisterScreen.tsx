@@ -146,9 +146,14 @@ function RegisterScreen() {
       // you could pass it as a param:
       // navigation.navigate('Login', { registeredEmail: email });
     } catch (err: any) {
+      const isNetworkError =
+        err?.message?.toLowerCase().includes('network error') ||
+        !err?.response;
       const message =
         err?.response?.data?.message ||
-        err?.message ||
+        (isNetworkError
+          ? 'Unable to reach the backend server. Verify API_URL and be sure the backend is running.'
+          : err?.message) ||
         'Something went wrong. Please try again.';
       setErrors({ general: message });
     } finally {

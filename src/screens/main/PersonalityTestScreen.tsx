@@ -361,7 +361,7 @@ export default function PersonalityTestScreen({ navigation }: Props) {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
 
   const handleSubmit = () => {
-    if (allAnswered) navigation.navigate('HeroResult');
+    if (allAnswered) navigation.navigate('DemographicProfile');
   };
 
   const answeredCount = Object.keys(answers).length;
@@ -515,9 +515,7 @@ export default function PersonalityTestScreen({ navigation }: Props) {
               onPress={handleSubmit}
               activeOpacity={0.85}
             >
-              <Icon name="trophy" size={16} color={COLORS.textContrast} />
               <Text style={styles.ctaBtnText}> Ihayag ang Aking Bayani</Text>
-              <Text style={styles.ctaBtnArrow}> ▶</Text>
             </TouchableOpacity>
           </Animated.View>
         )}
@@ -555,8 +553,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: 90,
     paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingVertical: 18,
+    paddingBottom: -60,
     backgroundColor: COLORS.background,
   },
   backCircle: {

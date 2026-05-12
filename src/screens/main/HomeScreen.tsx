@@ -75,33 +75,6 @@ function BaybayinStrip() {
     </View>
   );
 }
-
-// ── Category pill ─────────────────────────────────────────────────────────────
-function CategoryPill({
-  item,
-  active,
-  onPress,
-}: {
-  item: (typeof CATEGORIES)[0];
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      style={[styles.categoryPill, active && styles.categoryPillActive]}
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
-      <Text style={styles.categoryIcon}>{item.icon}</Text>
-      <Text
-        style={[styles.categoryLabel, active && styles.categoryLabelActive]}
-      >
-        {item.label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
 // ── Hero Card ─────────────────────────────────────────────────────────────────
 function HeroCard({
   hero,
@@ -200,6 +173,10 @@ function StatsRow() {
 type Props = BottomTabScreenProps<MainTabParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
+  const user = {
+    name: 'Pamana',
+    photo: 'https://lh3.googleusercontent.com/a/ACg8ocL...',
+  };
   const logout = useAuthStore(state => state.logout);
   const [activeCategory, setActiveCategory] = useState('1');
 
@@ -253,13 +230,19 @@ export default function HomeScreen({ navigation }: Props) {
         <View style={styles.appNameWrap}>
           {/* Baybayin accent above app name */}
           <Text style={styles.appBaybayin}>ᜉᜋᜈ</Text>
-          <Text style={styles.appName}>PAMANA</Text>
+          <Text style={styles.appName}>Mabuhay!</Text>
         </View>
 
         <TouchableOpacity style={styles.avatarBtn} onPress={handleLogout}>
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarInitial}>P</Text>
-          </View>
+          {user?.photo ? (
+            <Image source={{ uri: user.photo }} style={styles.avatarImage} />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarInitial}>
+                {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -379,7 +362,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 56 : 44,
+    paddingTop: Platform.OS === 'ios' ? 8 : 40,
+    height: Platform.OS === 'ios' ? 60 : 85,
     paddingBottom: 10,
     backgroundColor: COLORS.background,
     zIndex: 10,
@@ -400,23 +384,36 @@ const styles = StyleSheet.create({
     letterSpacing: 5,
     color: COLORS.primary,
   },
-  avatarBtn: { padding: 2 },
+
+  avatarBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary, // or your preferred gold/brown color
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  // Update your existing placeholder to ensure it fills the button
   avatarPlaceholder: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLORS.primary,
+    width: '100%',
+    height: '100%',
+    backgroundColor: COLORS.secondary, // Or a nice heritage color
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.primaryLight,
   },
   avatarInitial: {
-    color: COLORS.textContrast,
+    color: '#FFF',
+    fontSize: 18,
     fontFamily: FONTS.PoppinsBold,
-    fontSize: 15,
   },
-
   // ── Baybayin Strip ──
   baybayinStrip: {
     backgroundColor: COLORS.primary,

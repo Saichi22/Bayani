@@ -21,13 +21,10 @@ function MainTabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
-        // 1. Remove fixed heights and let it auto-scale
         tabBarStyle: {
-          backgroundColor: '#000000',
-          borderTopWidth: 1,
-          borderTopColor: '#000000',
+          backgroundColor: '#f8f2e8',
+          height: Platform.OS === 'ios' ? 80 : 100, // Adjust height for iOS and Android
         },
-        // 2. Use 'position: relative' to ensure it doesn't sink
         tabBarLabelStyle: {
           fontFamily: FONTS.PoppinsRegular,
           fontSize: 11,

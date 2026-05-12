@@ -15,18 +15,18 @@ function ProfileScreen() {
       <Text style={styles.title}>Profile</Text>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Your Hero Match</Text>
-        <Text style={styles.placeholder}>Complete the assessment to see your match</Text>
+        <Text style={styles.sectionTitle}>Katulad mo na Bayani</Text>
+        <Text style={styles.placeholder}>Kumpletuhin ang pagsusuri upang makita ang iyong katulad.</Text>
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Demographics</Text>
-        <Text style={styles.placeholder}>Set your profile to refine matches</Text>
+        <Text style={styles.sectionTitle}>Demograpiya</Text>
+        <Text style={styles.placeholder}>Ayusin ang iyong profile upang mapabuti ang mga tugma.</Text>
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Saved Heroes</Text>
-        <Text style={styles.placeholder}>Your hero collection</Text>
+        <Text style={styles.sectionTitle}>Naitala na mga Bayani</Text>
+        <Text style={styles.placeholder}>Koleksyon ng iyong mga bayani</Text>
       </View>
       
       <Button title="Logout" onPress={logout} />

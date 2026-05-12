@@ -16,11 +16,11 @@ function HeroResultScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Hero Match</Text>
+      <Text style={styles.title}>Iyong Katugmang Bayani</Text>
       
       <View style={styles.heroCard}>
         <View style={styles.imagePlaceholder}>
-          <Text style={styles.placeholderText}>AI Transformed Image</Text>
+          <Text style={styles.placeholderText}>Larawang Binago ng AI</Text>
         </View>
         
         <Text style={styles.heroName}>{hero.name}</Text>

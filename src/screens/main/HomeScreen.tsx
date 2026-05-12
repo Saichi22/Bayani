@@ -28,12 +28,12 @@ function HomeScreen({ navigation }: Props) {
       </TouchableOpacity>
 
       <Text style={styles.title}>Bayani</Text>
-      <Text style={styles.subtitle}>Discover your heroic legacy</Text>
+      <Text style={styles.subtitle}>alamin kung aling bayani ang iyong katulad</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Take the Assessment</Text>
         <Text style={styles.cardText}>
-          Answer psychometric questions to find your historical hero match
+          Sagutin ang mga tanong upang malaman kung sinong bayaning Pilipino ang katulad mo
         </Text>
         <Button
           title="Start Assessment"
@@ -44,7 +44,7 @@ function HomeScreen({ navigation }: Props) {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>AI Face Transform</Text>
         <Text style={styles.cardText}>
-          Transform your photo into your matched historical hero
+          palitan ang iyong larawan sa iyong katulad na bayani.
         </Text>
         <Button title="Take Photo" onPress={() => {}} />
       </View>

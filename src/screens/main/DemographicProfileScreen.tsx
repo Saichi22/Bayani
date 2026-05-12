@@ -47,9 +47,9 @@ function DemographicProfileScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Demographic Profile</Text>
+      <Text style={styles.title}>Demograpikong Profile</Text>
       <Text style={styles.subtitle}>
-        Help us refine your historical hero matching
+        Tulungan kaming pagbutihin ang pagtutugma ng iyong makasaysayang bayani
       </Text>
 
       <Text style={styles.label}>Ethnicity</Text>
@@ -59,28 +59,28 @@ function DemographicProfileScreen({ navigation }: Props) {
           onValueChange={(value) => setEthnicity(value)}
           style={styles.picker}
         >
-          <Picker.Item label="Select your ethnicity" value="" />
+          <Picker.Item label="Piliin ang iyong etnisidad" value="" />
           {ethnicities.map((e) => (
             <Picker.Item key={e} label={e} value={e} />
           ))}
         </Picker>
       </View>
 
-      <Text style={styles.label}>Current Location</Text>
+      <Text style={styles.label}>Kasalukuyang Rehiyon</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={region}
           onValueChange={(value) => setRegion(value)}
           style={styles.picker}
         >
-          <Picker.Item label="Select your region" value="" />
+          <Picker.Item label="Piliin ang iyong rehiyon" value="" />
           {regions.map((r) => (
             <Picker.Item key={r} label={r} value={r} />
           ))}
         </Picker>
       </View>
 
-      <Button title="Save Profile" onPress={handleSave} />
+      <Button title="I-save ang Profile" onPress={handleSave} />
     </View>
   );
 }

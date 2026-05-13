@@ -46,7 +46,7 @@ function HomeScreen({ navigation }: Props) {
         <Text style={styles.cardText}>
           Transform your photo into your matched historical hero
         </Text>
-        <Button title="Take Photo" onPress={() => {}} />
+        <Button title="Take Photo" onPress={() => (navigation as any).navigate('Camera')} />
       </View>
     </View>
   );

@@ -1,36 +1,94 @@
 // filepath: src/screens/main/CameraScreen.tsx
-import React, { useState, useRef } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, Alert, Image, ActivityIndicator } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigation/types';
+import { launchCamera, ImagePickerResponse } from 'react-native-image-picker';
+import { api } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'Camera'>;
 
 function CameraScreen({ navigation }: Props) {
-  const [photoTaken, setPhotoTaken] = useState(false);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [base64Data, setBase64Data] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useAuthStore(state => state.user);
 
-  const handleTakePhoto = () => {
-    // TODO: Implement actual camera functionality
-    // For now, simulate taking a photo
-    Alert.alert(
-      "Camera",
-      "Camera functionality would be implemented here using react-native-camera or expo-camera",
-      [
-        {
-          text: "Simulate Photo",
-          onPress: () => {
-            setPhotoTaken(true);
-          },
-        },
-      ]
-    );
+  const handleTakePhoto = async () => {
+    try {
+      const response: ImagePickerResponse = await launchCamera({
+        mediaType: 'photo',
+        cameraType: 'front',
+        includeBase64: true,
+        quality: 0.8,
+        maxWidth: 1024,
+        maxHeight: 1024,
+      });
+
+      if (response.didCancel) {
+        return;
+      }
+
+      if (response.errorCode) {
+        Alert.alert('Camera Error', response.errorMessage || 'Unknown error occurred');
+        return;
+      }
+
+      if (response.assets && response.assets.length > 0) {
+        const asset = response.assets[0];
+        if (asset.uri && asset.base64) {
+          setPhotoUri(asset.uri);
+          setBase64Data(asset.base64);
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to launch camera');
+      console.error(error);
+    }
   };
 
-  const handleTransform = () => {
-    if (photoTaken) {
-      navigation.navigate('HeroResult');
-    } else {
+  const handleTransform = async () => {
+    if (!base64Data) {
       Alert.alert("Error", "Please take a photo first");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Format base64 to include data URI scheme
+      const base64Photo = `data:image/jpeg;base64,${base64Data}`;
+      
+      const response = await api.post('/mashup/generate-rizal', {
+        userId: user?.id || 'anonymous',
+        base64Photo: base64Photo,
+      });
+
+      const mashupId = response.data.id;
+      let status = 'PENDING';
+      let imageUrl = null;
+
+      while (status === 'PENDING') {
+        // Wait 5 seconds
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        
+        // Check status
+        const checkRes = await api.get(`/mashup/${mashupId}`);
+        status = checkRes.data.status;
+        
+        if (status === 'COMPLETED') {
+          imageUrl = checkRes.data.imageUrl;
+        } else if (status === 'FAILED') {
+          throw new Error("Image generation failed");
+        }
+      }
+      
+      navigation.navigate('HeroResult', { imageUrl });
+    } catch (error) {
+      console.error('Mashup API Error:', error);
+      Alert.alert("Transformation Failed", "Failed to communicate with the backend or image generation failed.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,28 +96,35 @@ function CameraScreen({ navigation }: Props) {
     <View style={styles.container}>
       <Text style={styles.title}>AI Face Transform</Text>
       <Text style={styles.subtitle}>
-        Take a photo to transform into your matched hero
+        Take a photo to transform into Jose Rizal
       </Text>
 
       <View style={styles.cameraPlaceholder}>
-        {photoTaken ? (
-          <Text style={styles.placeholderText}>Photo Captured ✓</Text>
+        {photoUri ? (
+          <Image source={{ uri: photoUri }} style={styles.previewImage} />
         ) : (
           <Text style={styles.placeholderText}>Camera Preview</Text>
         )}
       </View>
 
-      <Button
-        title={photoTaken ? "Retake Photo" : "Take Photo"}
-        onPress={handleTakePhoto}
-      />
+      <View style={styles.buttonContainer}>
+        <Button
+          title={photoUri ? "Retake Photo" : "Take Photo"}
+          onPress={handleTakePhoto}
+          disabled={isLoading}
+        />
+      </View>
 
-      {photoTaken && (
+      {photoUri && (
         <View style={styles.transformButton}>
-          <Button
-            title="Transform to Hero"
-            onPress={handleTransform}
-          />
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Button
+              title="Transform to Hero"
+              onPress={handleTransform}
+            />
+          )}
         </View>
       )}
     </View>
@@ -90,10 +155,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    overflow: 'hidden',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   placeholderText: {
     fontSize: 18,
     color: '#666',
+  },
+  buttonContainer: {
+    marginBottom: 15,
   },
   transformButton: {
     marginTop: 15,

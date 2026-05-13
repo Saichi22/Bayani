@@ -6,12 +6,14 @@ import { MainStackParamList } from '../../navigation/types';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'HeroResult'>;
 
-function HeroResultScreen({ navigation }: Props) {
+function HeroResultScreen({ route, navigation }: Props) {
+  const { imageUrl } = route.params || {};
+
   // TODO: This would be populated from the assessment results
   const hero = {
     name: "Jose Rizal",
     description: "Your personality aligns with the national hero of the Philippines. Like Rizal, you value education, intellect, and peaceful reform.",
-    image: null, // Would be AI-transformed image
+    image: imageUrl || null,
   };
 
   return (
@@ -19,9 +21,13 @@ function HeroResultScreen({ navigation }: Props) {
       <Text style={styles.title}>Your Hero Match</Text>
       
       <View style={styles.heroCard}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.placeholderText}>AI Transformed Image</Text>
-        </View>
+        {hero.image ? (
+          <Image source={{ uri: hero.image }} style={styles.imagePlaceholder} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.placeholderText}>AI Transformed Image</Text>
+          </View>
+        )}
         
         <Text style={styles.heroName}>{hero.name}</Text>
         <Text style={styles.heroDescription}>{hero.description}</Text>

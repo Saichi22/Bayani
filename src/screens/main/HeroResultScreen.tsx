@@ -20,22 +20,15 @@ import AssessmentHeader from '../../components/AssessmentHeader';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'HeroResult'>;
 
-// ── Mock hero data ────────────────────────────────────────────────────────────
-const hero = {
-  name: 'Jose Rizal',
-  tagline: 'Ilustrado · Manunulat · Bayani ng Bansa',
-  era: '1861 – 1896',
-  tag: 'ILUSTRADO',
-  description:
-    'Your personality aligns with the national hero of the Philippines. Like Rizal, you value education, intellect, and peaceful reform. You believe that the pen is mightier than the sword.',
-  traits: [
-    { iconName: 'book', label: 'Makatalino', sublabel: 'Intellectual' },
-    { iconName: 'pencil', label: 'Malikhaing', sublabel: 'Creative' },
-    { iconName: 'heart', label: 'Makatao', sublabel: 'Humanist' },
-    { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
-  ],
-  matchScore: 92,
-};
+function HeroResultScreen({ route, navigation }: Props) {
+  const { imageUrl } = route.params || {};
+
+  // TODO: This would be populated from the assessment results
+  const hero = {
+    name: "Jose Rizal",
+    description: "Your personality aligns with the national hero of the Philippines. Like Rizal, you value education, intellect, and peaceful reform.",
+    image: imageUrl || null,
+  };
 
 // ── Trait badge ───────────────────────────────────────────────────────────────
 function TraitBadge({ item }: { item: (typeof hero.traits)[0] }) {
@@ -44,8 +37,6 @@ function TraitBadge({ item }: { item: (typeof hero.traits)[0] }) {
       <View style={styles.traitIconWrap}>
         <Icon name={item.iconName} size={14} color={COLORS.primary} />
       </View>
-      <Text style={styles.traitLabel}>{item.label}</Text>
-      <Text style={styles.traitSublabel}>{item.sublabel}</Text>
     </View>
   );
 }
@@ -61,7 +52,105 @@ export default function HeroResultScreen({ navigation }: Props) {
   useEffect(() => {
     Animated.parallel([
       Animated.timing(portraitFade, {
+        duration: 700,
+        useNativeDriver: true,
+      }),
+      Animated.spring(portraitScale, {
         toValue: 1,
+        tension: 50,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(contentFade, {
+        toValue: 1,
+        duration: 600,
+        delay: 300,
+        useNativeDriver: true,
+      }),
+      Animated.spring(contentSlide, {
+        toValue: 0,
+        delay: 300,
+        tension: 55,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scoreAnim, {
+        toValue: hero.matchScore,
+        duration: 1200,
+        delay: 500,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, []);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `Ang aking Bayani ay si ${hero.name}! Alamin ang sa iyo sa BAYANI app. 🇵🇭`,
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.root}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background}
+        translucent={false}
+      />
+
+      {/* ── Shared header — step 3 (0-based) = 100 % progress ── */}
+      <AssessmentHeader
+        currentStep={3}
+        title="RESULTA"
+        baybayinLabel="ᜇᜒᜊᜎ"
+        subtitle="★ Iyong Bayani ★"
+        onBack={() => navigation.goBack()}
+      />
+
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Portrait card ── */}
+        <Animated.View
+          style={[
+            styles.portraitCard,
+            { opacity: portraitFade, transform: [{ scale: portraitScale }] },
+          ]}
+        >
+          {/* Decorative corner accents */}
+          <View style={[styles.corner, styles.cornerTL]} />
+          <View style={[styles.corner, styles.cornerTR]} />
+          <View style={[styles.corner, styles.cornerBL]} />
+          <View style={[styles.corner, styles.cornerBR]} />
+
+          {/* Tag */}
+          <Image source={{ uri: hero.image }} style={styles.imagePlaceholder} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.placeholderText}>AI Transformed Image</Text>
+          </View>
+        )}
+        
+        <Text style={styles.heroName}>{hero.name}</Text>
+        <Text style={styles.heroDescription}>{hero.description}</Text>
+  );
+}
+
+// ── Screen ────────────────────────────────────────────────────────────────────
+export default function HeroResultScreen({ navigation }: Props) {
+  const contentFade = useRef(new Animated.Value(0)).current;
+  const contentSlide = useRef(new Animated.Value(30)).current;
+  const portraitScale = useRef(new Animated.Value(0.85)).current;
+  const portraitFade = useRef(new Animated.Value(0)).current;
+  const scoreAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(portraitFade, {
         duration: 700,
         useNativeDriver: true,
       }),

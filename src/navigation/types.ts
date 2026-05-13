@@ -22,5 +22,5 @@ export type MainStackParamList = {
   PersonalityTest: undefined;
   DemographicProfile: undefined;
   Camera: undefined;
-  HeroResult: undefined;
+  HeroResult: { imageUrl?: string };
 };

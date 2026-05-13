@@ -146,6 +146,12 @@ function FactCard({ text }: { text: string }) {
           <Text style={styles.factDot}>✦</Text>
         </View>
         <Text style={styles.factText}>{text}</Text>
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>AI Face Transform</Text>
+        <Text style={styles.cardText}>
+          Transform your photo into your matched historical hero
+        </Text>
+        <Button title="Take Photo" onPress={() => (navigation as any).navigate('Camera')} />
       </View>
     </View>
   );

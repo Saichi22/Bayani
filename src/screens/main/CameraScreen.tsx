@@ -140,7 +140,7 @@ export default function CameraScreen({ navigation }: Props) {
       let imageUrl = null;
 
       while (status === 'PENDING') {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(() => resolve(null), 5000));
 
         const checkRes = await api.get(`/mashup/${mashupId}`);
         status = checkRes.data.status;

@@ -191,44 +191,6 @@ export default function AssessmentHeader({
       </View>
 
       {/* ── Progress bar ── */}
-      <View style={styles.progressContainer}>
-        <View style={styles.progressMeta}>
-          <View style={styles.progressLabelRow}>
-            <Icon name="bar-chart" size={11} color={COLORS.primaryLight} />
-            <Text style={styles.progressLabel}> Katuparan</Text>
-          </View>
-          <Text style={styles.progressCount}>
-            {currentStep + 1}
-            <Text style={styles.progressTotal}> / {totalSteps}</Text>
-          </Text>
-        </View>
-
-        <View style={styles.progressBarBg}>
-          <Animated.View
-            style={[
-              styles.progressBarFill,
-              {
-                width: progressAnim.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: ['0%', '100%'],
-                }),
-              },
-            ]}
-          >
-            <View style={styles.progressSheen} />
-          </Animated.View>
-        </View>
-
-        {/* Segment ticks */}
-        <View style={styles.tickRow}>
-          {ASSESSMENT_STEPS.map((_, i) => (
-            <View
-              key={i}
-              style={[styles.tick, i <= currentStep && styles.tickAnswered]}
-            />
-          ))}
-        </View>
-      </View>
 
       {/* ── Ornate divider ── */}
       <View style={styles.ornamentDivider}>

@@ -10,10 +10,15 @@ import {
   Animated,
   StatusBar,
   Alert,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigation/types';
+import { launchCamera, ImagePickerResponse } from 'react-native-image-picker';
+import { api } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 import { COLORS } from '../../styles/colors';
 import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
@@ -34,7 +39,10 @@ function TipRow({ iconName, text }: { iconName: string; text: string }) {
 
 // ── Screen ────────────────────────────────────────────────────────────────────
 export default function CameraScreen({ navigation }: Props) {
-  const [photoTaken, setPhotoTaken] = useState(false);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [base64Data, setBase64Data] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useAuthStore(state => state.user);
 
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(24)).current;
@@ -59,7 +67,7 @@ export default function CameraScreen({ navigation }: Props) {
 
   // Pulse the camera icon when no photo taken
   useEffect(() => {
-    if (photoTaken) return;
+    if (photoUri) return;
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -76,22 +84,84 @@ export default function CameraScreen({ navigation }: Props) {
     );
     loop.start();
     return () => loop.stop();
-  }, [photoTaken]);
+  }, [photoUri]);
 
-  const handleTakePhoto = () => {
-    Alert.alert(
-      'Kumuha ng Larawan',
-      'Camera functionality will be implemented using react-native-camera or expo-camera.',
-      [
-        { text: 'I-simulate', onPress: () => setPhotoTaken(true) },
-        { text: 'Kanselahin', style: 'cancel' },
-      ],
-    );
+  const handleTakePhoto = async () => {
+    try {
+      const response: ImagePickerResponse = await launchCamera({
+        mediaType: 'photo',
+        cameraType: 'front',
+        includeBase64: true,
+        quality: 0.8,
+        maxWidth: 1024,
+        maxHeight: 1024,
+      });
+
+      if (response.didCancel) return;
+
+      if (response.errorCode) {
+        Alert.alert(
+          'Camera Error',
+          response.errorMessage || 'Unknown error occurred',
+        );
+        return;
+      }
+
+      if (response.assets && response.assets.length > 0) {
+        const asset = response.assets[0];
+        if (asset.uri && asset.base64) {
+          setPhotoUri(asset.uri);
+          setBase64Data(asset.base64);
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to launch camera');
+      console.error(error);
+    }
   };
 
-  const handleTransform = () => {
-    if (photoTaken) navigation.navigate('HeroResult');
-    else Alert.alert('Walang Larawan', 'Kumuha muna ng larawan.');
+  const handleTransform = async () => {
+    if (!base64Data) {
+      Alert.alert('Walang Larawan', 'Kumuha muna ng larawan.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const base64Photo = `data:image/jpeg;base64,${base64Data}`;
+
+      const response = await api.post('/mashup/generate-rizal', {
+        userId: user?.id || 'anonymous',
+        base64Photo,
+      });
+
+      const mashupId = response.data.id;
+      let status = 'PENDING';
+      let imageUrl = null;
+
+      while (status === 'PENDING') {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        const checkRes = await api.get(`/mashup/${mashupId}`);
+        status = checkRes.data.status;
+
+        if (status === 'COMPLETED') {
+          imageUrl = checkRes.data.imageUrl;
+        } else if (status === 'FAILED') {
+          throw new Error('Image generation failed');
+        }
+      }
+
+      navigation.navigate('HeroResult', { imageUrl });
+    } catch (error) {
+      console.error('Mashup API Error:', error);
+      Alert.alert(
+        'Transformation Failed',
+        'Failed to communicate with the backend or image generation failed.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -109,8 +179,8 @@ export default function CameraScreen({ navigation }: Props) {
         baybayinLabel="ᜎᜇᜏᜈ᜔"
         subtitle="★ AI Face Transform ★"
         onBack={() => navigation.goBack()}
-        actionLabel={photoTaken ? 'Susunod' : undefined}
-        actionEnabled={photoTaken}
+        actionLabel={photoUri ? 'Susunod' : undefined}
+        actionEnabled={!!photoUri}
         onAction={handleTransform}
         actionIconName="arrow-right"
       />
@@ -143,25 +213,15 @@ export default function CameraScreen({ navigation }: Props) {
           </View>
 
           {/* ── Camera viewfinder ── */}
-          <View
-            style={[styles.viewfinder, photoTaken && styles.viewfinderDone]}
-          >
+          <View style={[styles.viewfinder, photoUri && styles.viewfinderDone]}>
             {/* Corner brackets */}
             <View style={[styles.corner, styles.cornerTL]} />
             <View style={[styles.corner, styles.cornerTR]} />
             <View style={[styles.corner, styles.cornerBL]} />
             <View style={[styles.corner, styles.cornerBR]} />
 
-            {photoTaken ? (
-              <View style={styles.capturedState}>
-                <View style={styles.capturedIconCircle}>
-                  <Icon name="check" size={32} color={COLORS.textContrast} />
-                </View>
-                <Text style={styles.capturedLabel}>Nakunan na!</Text>
-                <Text style={styles.capturedSublabel}>
-                  Handa na para sa AI transformation
-                </Text>
-              </View>
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.previewImage} />
             ) : (
               <View style={styles.idleState}>
                 <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
@@ -178,7 +238,7 @@ export default function CameraScreen({ navigation }: Props) {
           </View>
 
           {/* ── Tips ── */}
-          {!photoTaken && (
+          {!photoUri && (
             <View style={styles.tipsCard}>
               <View style={styles.tipsHeader}>
                 <Icon
@@ -202,45 +262,57 @@ export default function CameraScreen({ navigation }: Props) {
             <TouchableOpacity
               style={[
                 styles.primaryBtn,
-                photoTaken && styles.secondaryOutlineBtn,
+                photoUri && styles.secondaryOutlineBtn,
               ]}
               onPress={handleTakePhoto}
               activeOpacity={0.85}
+              disabled={isLoading}
             >
               <Icon
-                name={photoTaken ? 'repeat' : 'camera'}
+                name={photoUri ? 'repeat' : 'camera'}
                 size={16}
-                color={photoTaken ? COLORS.primary : COLORS.textContrast}
+                color={photoUri ? COLORS.primary : COLORS.textContrast}
               />
               <Text
                 style={[
                   styles.primaryBtnText,
-                  photoTaken && styles.secondaryOutlineBtnText,
+                  photoUri && styles.secondaryOutlineBtnText,
                 ]}
               >
                 {' '}
-                {photoTaken ? 'Kumuha Ulit' : 'Kumuha ng Larawan'}
+                {photoUri ? 'Kumuha Ulit' : 'Kumuha ng Larawan'}
               </Text>
             </TouchableOpacity>
 
-            {photoTaken && (
+            {photoUri && (
               <>
                 <View style={styles.ctaOrnRow}>
                   <View style={styles.ornLine} />
                   <Text style={styles.ctaOrnText}>✦ HANDA NA ✦</Text>
                   <View style={styles.ornLine} />
                 </View>
-                <TouchableOpacity
-                  style={styles.primaryBtn}
-                  onPress={handleTransform}
-                  activeOpacity={0.85}
-                >
-                  <Icon name="magic" size={15} color={COLORS.textContrast} />
-                  <Text style={styles.primaryBtnText}>
-                    {' '}
-                    I-transform sa Bayani
-                  </Text>
-                </TouchableOpacity>
+
+                {isLoading ? (
+                  <View style={styles.loadingBtn}>
+                    <ActivityIndicator
+                      size="small"
+                      color={COLORS.textContrast}
+                    />
+                    <Text style={styles.primaryBtnText}> Ginagawa...</Text>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.primaryBtn}
+                    onPress={handleTransform}
+                    activeOpacity={0.85}
+                  >
+                    <Icon name="magic" size={15} color={COLORS.textContrast} />
+                    <Text style={styles.primaryBtnText}>
+                      {' '}
+                      I-transform sa Bayani
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </>
             )}
           </View>
@@ -312,6 +384,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     backgroundColor: '#fff8f5',
   },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
   // Corner brackets
   corner: {
     position: 'absolute',
@@ -374,30 +451,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 24,
   },
-  // Captured state
-  capturedState: { alignItems: 'center', gap: 10 },
-  capturedIconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: COLORS.primary,
-    borderWidth: 2,
-    borderColor: COLORS.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  capturedLabel: {
-    fontFamily: FONTS.kawitBold,
-    fontSize: 18,
-    color: COLORS.primary,
-  },
-  capturedSublabel: {
-    fontFamily: FONTS.PoppinsRegular,
-    fontSize: 11,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: 24,
-  },
 
   // ── Tips ──
   tipsCard: {
@@ -450,6 +503,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: COLORS.primaryLight,
+  },
+  loadingBtn: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+    opacity: 0.8,
   },
   primaryBtnText: {
     color: COLORS.textContrast,

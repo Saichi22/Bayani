@@ -75,6 +75,7 @@ function BaybayinStrip() {
     </View>
   );
 }
+
 // ── Hero Card ─────────────────────────────────────────────────────────────────
 function HeroCard({
   hero,
@@ -228,7 +229,6 @@ export default function HomeScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <View style={styles.appNameWrap}>
-          {/* Baybayin accent above app name */}
           <Text style={styles.appBaybayin}>ᜉᜋᜈ</Text>
           <Text style={styles.appName}>Mabuhay!</Text>
         </View>
@@ -261,11 +261,9 @@ export default function HomeScreen({ navigation }: Props) {
             style={styles.banner}
             resizeMode="cover"
           >
-            {/* Layered overlays for depth */}
             <View style={styles.bannerOverlayDark} />
             <View style={styles.bannerOverlayColor} />
 
-            {/* Top ornament */}
             <View style={styles.bannerTopOrnament}>
               <View style={styles.ornamentLine} />
               <Text style={styles.ornamentBaybayin}>ᜊᜌᜈᜒ</Text>
@@ -275,7 +273,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.bannerTagline}>Ang Kasaysayan ng</Text>
             <Text style={styles.bannerTitle}>BAYANI</Text>
 
-            {/* Bottom ornament */}
             <View style={styles.bannerBottomOrnament}>
               <Text style={styles.bannerDots}>✦ ✦ ✦</Text>
             </View>
@@ -290,7 +287,6 @@ export default function HomeScreen({ navigation }: Props) {
         >
           {/* ── Discover Card ── */}
           <View style={styles.discoverCard}>
-            {/* Ornate top border strip */}
             <View style={styles.discoverOrnament}>
               <View style={styles.ornamentLineShort} />
               <Text style={styles.ornamentStar}>✦</Text>
@@ -312,7 +308,6 @@ export default function HomeScreen({ navigation }: Props) {
               onPress={() => navigation.navigate('Assessment')}
               activeOpacity={0.85}
             >
-              {/* Inner ornament on button */}
               <Text style={styles.ctaBtnOrnament}>✦ </Text>
               <Text style={styles.ctaBtnText}>Simulan ang Pagtatasa</Text>
               <Text style={styles.ctaBtnOrnament}> ✦</Text>
@@ -384,13 +379,12 @@ const styles = StyleSheet.create({
     letterSpacing: 5,
     color: COLORS.primary,
   },
-
   avatarBtn: {
     width: 42,
     height: 42,
     borderRadius: 21,
     borderWidth: 1.5,
-    borderColor: COLORS.primary, // or your preferred gold/brown color
+    borderColor: COLORS.primary,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -401,11 +395,10 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  // Update your existing placeholder to ensure it fills the button
   avatarPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: COLORS.secondary, // Or a nice heritage color
+    backgroundColor: COLORS.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -414,6 +407,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: FONTS.PoppinsBold,
   },
+
   // ── Baybayin Strip ──
   baybayinStrip: {
     backgroundColor: COLORS.primary,
@@ -499,13 +493,12 @@ const styles = StyleSheet.create({
   // ── Discover Card ──
   discoverCard: {
     marginHorizontal: 16,
-    marginTop: -20, // overlap with banner for layered effect
+    marginTop: -20,
     backgroundColor: COLORS.surface,
     borderRadius: 24,
     padding: 22,
     borderWidth: 1.5,
     borderColor: COLORS.secondary,
-    // Platform shadow
     elevation: 6,
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
@@ -569,7 +562,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    // Inner shadow effect
     borderWidth: 1,
     borderColor: COLORS.primaryLight,
   },
@@ -637,9 +629,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLORS.primary,
   },
-  seeAllBtn: {
-    paddingBottom: 2,
-  },
+  seeAllBtn: { paddingBottom: 2 },
   seeAllText: {
     fontFamily: FONTS.PoppinsBold,
     fontSize: 11,
@@ -680,7 +670,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     opacity: 0.9,
   },
-  // Decorative corner accents
   heroCornerTL: {
     position: 'absolute',
     top: 8,

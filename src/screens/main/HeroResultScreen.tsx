@@ -10,6 +10,7 @@ import {
   Animated,
   StatusBar,
   Share,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -51,7 +52,10 @@ function TraitBadge({ item }: { item: (typeof hero.traits)[0] }) {
 }
 
 // ── Screen ────────────────────────────────────────────────────────────────────
-export default function HeroResultScreen({ navigation }: Props) {
+export default function HeroResultScreen({ route, navigation }: Props) {
+  // Real AI-generated image URL passed from CameraScreen via navigation
+  const imageUrl = route.params?.imageUrl ?? null;
+
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(30)).current;
   const portraitScale = useRef(new Animated.Value(0.85)).current;
@@ -140,13 +144,17 @@ export default function HeroResultScreen({ navigation }: Props) {
             <Text style={styles.heroTagText}>{hero.tag}</Text>
           </View>
 
-          {/* Portrait placeholder — replace with actual Image */}
-          <View style={styles.portraitPlaceholder}>
-            <Icon name="user-circle" size={72} color={COLORS.primaryLight} />
-            <Text style={styles.portraitPlaceholderLabel}>
-              AI Transformed Image
-            </Text>
-          </View>
+          {/* Portrait: real AI image if available, otherwise placeholder */}
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.portraitImage} />
+          ) : (
+            <View style={styles.portraitPlaceholder}>
+              <Icon name="user-circle" size={72} color={COLORS.primaryLight} />
+              <Text style={styles.portraitPlaceholderLabel}>
+                AI Transformed Image
+              </Text>
+            </View>
+          )}
 
           {/* Era badge */}
           <View style={styles.eraBadge}>
@@ -338,6 +346,14 @@ const styles = StyleSheet.create({
     color: COLORS.textContrast,
     letterSpacing: 1.5,
   },
+  portraitImage: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: COLORS.secondary,
+    marginBottom: 10,
+  },
   portraitPlaceholder: {
     width: 180,
     height: 180,
@@ -453,7 +469,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 4,
   },
-
   heroDescription: {
     fontFamily: FONTS.PoppinsRegular,
     fontSize: 13,

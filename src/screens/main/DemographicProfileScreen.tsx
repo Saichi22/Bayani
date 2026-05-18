@@ -10,9 +10,9 @@ import {
   Animated,
   StatusBar,
   Platform,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Picker } from '@react-native-picker/picker';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigation/types';
 import { COLORS } from '../../styles/colors';
@@ -99,6 +99,7 @@ function FieldCard({
 export default function DemographicProfileScreen({ navigation }: Props) {
   const [ethnicity, setEthnicity] = useState('');
   const [region, setRegion] = useState('');
+  const [search, setSearch] = useState('');
 
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(24)).current;
@@ -186,26 +187,46 @@ export default function DemographicProfileScreen({ navigation }: Props) {
             sublabel="Ethnicity"
             filled={ethnicity !== ''}
           >
-            <Picker
-              selectedValue={ethnicity}
-              onValueChange={val => setEthnicity(val)}
-              style={styles.picker}
-              dropdownIconColor={COLORS.primary}
-            >
-              <Picker.Item
-                label="Piliin ang iyong etnisidad…"
-                value=""
-                color={COLORS.textSecondary}
+            <View style={styles.listContainer}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search"
+                placeholderTextColor={COLORS.textSecondary}
+                value={search}
+                onChangeText={setSearch}
               />
-              {ethnicities.map(e => (
-                <Picker.Item
-                  key={e}
-                  label={e}
-                  value={e}
-                  color={COLORS.textSecondary}
-                />
-              ))}
-            </Picker>
+              <ScrollView style={styles.optionsList} nestedScrollEnabled>
+                {ethnicities
+                  .filter(e => e.toLowerCase().includes(search.toLowerCase()))
+                  .map((e, idx) => {
+                    const selected = ethnicity === e;
+                    return (
+                      <TouchableOpacity
+                        key={e}
+                        style={[
+                          styles.ethCard,
+                          selected && styles.ethCardSelected,
+                        ]}
+                        onPress={() => setEthnicity(e)}
+                        activeOpacity={0.8}
+                      >
+                        <View style={styles.ethLeft}> 
+                          <Text style={styles.ethText}>{e}</Text>
+                        </View>
+                        <View style={styles.ethRight}>
+                          {selected ? (
+                            <View style={styles.selectedDot}>
+                              <Icon name="check" size={12} color="#fff" />
+                            </View>
+                          ) : (
+                            <View style={styles.unselectedDot} />
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+              </ScrollView>
+            </View>
           </FieldCard>
 
           {/* ── Region field ── */}
@@ -215,26 +236,39 @@ export default function DemographicProfileScreen({ navigation }: Props) {
             sublabel="Current Region"
             filled={region !== ''}
           >
-            <Picker
-              selectedValue={region}
-              onValueChange={val => setRegion(val)}
-              style={styles.picker}
-              dropdownIconColor={COLORS.primary}
-            >
-              <Picker.Item
-                label="Piliin ang iyong rehiyon…"
-                value=""
-                color={COLORS.textSecondary}
-              />
-              {regions.map(r => (
-                <Picker.Item
-                  key={r}
-                  label={r}
-                  value={r}
-                  color={COLORS.textSecondary}
-                />
-              ))}
-            </Picker>
+            <View style={styles.regionWrap}>
+              {/* Island group pills removed per design request */}
+
+              <View style={styles.provinceListWrap}>
+                <ScrollView nestedScrollEnabled>
+                  {regions.map((r, i) => {
+                    const selected = region === r;
+                    return (
+                      <TouchableOpacity
+                        key={r}
+                        style={styles.provinceRow}
+                        onPress={() => setRegion(r)}
+                        activeOpacity={0.8}
+                      >
+                        <View style={styles.provinceIndex}>
+                          <Text style={styles.provinceIndexText}>
+                            {String(i + 1).padStart(2, '0')}
+                          </Text>
+                        </View>
+                        <Text style={styles.provinceText}>{r}</Text>
+                        <View style={styles.radioWrap}>
+                          {selected ? (
+                            <View style={styles.radioSelected} />
+                          ) : (
+                            <View style={styles.radio} />
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            </View>
           </FieldCard>
         </Animated.View>
 
@@ -263,18 +297,12 @@ export default function DemographicProfileScreen({ navigation }: Props) {
             disabled={!canProceed}
             activeOpacity={0.85}
           >
-            <Icon
-              name="camera"
-              size={15}
-              color={canProceed ? COLORS.textContrast : COLORS.textSecondary}
-            />
             <Text
               style={[
                 styles.ctaBtnText,
                 !canProceed && styles.ctaBtnTextDisabled,
               ]}
             >
-              {' '}
               I-save at Magpatuloy
             </Text>
           </TouchableOpacity>
@@ -454,4 +482,87 @@ const styles = StyleSheet.create({
   ctaBtnTextDisabled: {
     color: COLORS.textSecondary,
   },
+  // ── New UI styles
+  listContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+  },
+  searchInput: {
+    height: 48,
+    borderRadius: 28,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#f2d6c8',
+    marginBottom: 12,
+    color: COLORS.primary,
+    fontFamily: FONTS.PoppinsRegular,
+  },
+  optionsList: { maxHeight: 260, paddingRight: 6 },
+  ethCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    marginBottom: 10,
+    backgroundColor: 'transparent',
+  },
+  ethCardSelected: {
+    borderColor: COLORS.primary,
+    backgroundColor: '#fff6f2',
+  },
+  ethLeft: { flexDirection: 'row', alignItems: 'center' },
+  ethText: { fontFamily: FONTS.PoppinsRegular, color: COLORS.primary, fontSize: 16, marginLeft: 4 },
+  ethRight: { width: 36, alignItems: 'center', justifyContent: 'center' },
+  selectedDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  unselectedDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.6,
+    borderColor: '#e9c9ba',
+    backgroundColor: 'transparent',
+  },
+  regionWrap: { paddingHorizontal: 12, paddingBottom: 8 },
+  /* island pills removed */
+  provinceListWrap: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderColor: COLORS.secondary,
+  },
+  provinceRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 6 },
+  provinceIndex: {
+    width: 44,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  provinceIndexText: { fontFamily: FONTS.PoppinsBold, color: COLORS.primary },
+  provinceText: { flex: 1, fontFamily: FONTS.PoppinsRegular, color: COLORS.primary },
+  radioWrap: { width: 36, alignItems: 'center' },
+  radio: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+  },
+  radioSelected: { width: 18, height: 18, borderRadius: 9, backgroundColor: COLORS.primary },
 });

@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.background,
+    paddingTop: 12,
   },
   overlapImage: {
     width: 1400,

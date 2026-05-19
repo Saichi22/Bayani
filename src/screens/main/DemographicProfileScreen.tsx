@@ -9,8 +9,8 @@ import {
   ScrollView,
   Animated,
   StatusBar,
-  Platform,
   TextInput,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -20,6 +20,8 @@ import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'DemographicProfile'>;
+
+const bayaniBackground = require('../../assets/images/bayaniBackground.png');
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const ethnicities = [
@@ -69,9 +71,7 @@ function FieldCard({
   return (
     <View style={[styles.fieldCard, filled && styles.fieldCardFilled]}>
       <View style={styles.fieldHeader}>
-        <View
-          style={[styles.fieldIconWrap, filled && styles.fieldIconWrapFilled]}
-        >
+        <View style={[styles.fieldIconWrap, filled && styles.fieldIconWrapFilled]}>
           <Icon
             name={iconName}
             size={15}
@@ -135,181 +135,197 @@ export default function DemographicProfileScreen({ navigation }: Props) {
         translucent={false}
       />
 
-      {/* ── Shared header — step 1 (0-based) = 50 % progress ── */}
-      <AssessmentHeader
-        currentStep={1}
-        title="PROPILO"
-        baybayinLabel="ᜉᜒᜎᜒᜉᜒᜈᜎ"
-        subtitle="★ Demographic Profile ★"
-        onBack={() => navigation.goBack()}
-        actionLabel="Susunod"
-        actionEnabled={canProceed}
-        onAction={handleSave}
-        actionIconName="arrow-right"
-      />
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <ImageBackground
+        source={bayaniBackground}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
-        {/* ── Intro card ── */}
-        <Animated.View
-          style={[
-            styles.introCard,
-            { opacity: contentFade, transform: [{ translateY: contentSlide }] },
-          ]}
-        >
-          <View style={styles.cardOrnRow}>
-            <View style={styles.cardOrnLine} />
-            <Text style={styles.cardOrnStar}>✦</Text>
-            <View style={styles.cardOrnLine} />
-          </View>
-          <Text style={styles.introTitle}>
-            Sabihin Mo sa Amin{'\n'}ang Iyong Ugat
-          </Text>
-          <Text style={styles.introBody}>
-            Your background helps us find the hero whose story resonates most
-            deeply with yours.
-          </Text>
-        </Animated.View>
+        {/* ── Shared header — step 1 (0-based) = 50 % progress ── */}
+        <AssessmentHeader
+          currentStep={1}
+          title="PROPILO"
+          baybayinLabel="ᜉᜒᜎᜒᜉᜒᜈᜎ"
+          subtitle="★ Demographic Profile ★"
+          onBack={() => navigation.goBack()}
+          actionLabel="Susunod"
+          actionEnabled={canProceed}
+          onAction={handleSave}
+          actionIconName="arrow-right"
+        />
 
-        {/* ── Ethnicity field ── */}
-        <Animated.View
-          style={{
-            opacity: contentFade,
-            transform: [{ translateY: contentSlide }],
-          }}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <FieldCard
-            iconName="users"
-            label="Etnisidad"
-            sublabel="Ethnicity"
-            filled={ethnicity !== ''}
+          {/* ── Intro card ── */}
+          <Animated.View
+            style={[
+              styles.introCard,
+              { opacity: contentFade, transform: [{ translateY: contentSlide }] },
+            ]}
           >
-            <View style={styles.listContainer}>
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search"
-                placeholderTextColor={COLORS.textSecondary}
-                value={search}
-                onChangeText={setSearch}
-              />
-              <ScrollView style={styles.optionsList} nestedScrollEnabled>
-                {ethnicities
-                  .filter(e => e.toLowerCase().includes(search.toLowerCase()))
-                  .map((e, idx) => {
-                    const selected = ethnicity === e;
-                    return (
-                      <TouchableOpacity
-                        key={e}
-                        style={[
-                          styles.ethCard,
-                          selected && styles.ethCardSelected,
-                        ]}
-                        onPress={() => setEthnicity(e)}
-                        activeOpacity={0.8}
-                      >
-                        <View style={styles.ethLeft}> 
-                          <Text style={styles.ethText}>{e}</Text>
-                        </View>
-                        <View style={styles.ethRight}>
-                          {selected ? (
-                            <View style={styles.selectedDot}>
-                              <Icon name="check" size={12} color="#fff" />
-                            </View>
-                          ) : (
-                            <View style={styles.unselectedDot} />
-                          )}
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })}
-              </ScrollView>
+            <View style={styles.cardOrnRow}>
+              <View style={styles.cardOrnLine} />
+              <Text style={styles.cardOrnStar}>✦</Text>
+              <View style={styles.cardOrnLine} />
             </View>
-          </FieldCard>
+            <Text style={styles.introTitle}>
+              Sabihin Mo sa Amin{"\n"}ang Iyong Ugat
+            </Text>
+            <Text style={styles.introBody}>
+              Your background helps us find the hero whose story resonates most
+              deeply with yours.
+            </Text>
+          </Animated.View>
 
-          {/* ── Region field ── */}
-          <FieldCard
-            iconName="map-marker"
-            label="Lokasyon"
-            sublabel="Current Region"
-            filled={region !== ''}
+          {/* ── Ethnicity field ── */}
+          <Animated.View
+            style={{
+              opacity: contentFade,
+              transform: [{ translateY: contentSlide }],
+            }}
           >
-            <View style={styles.regionWrap}>
-              {/* Island group pills removed per design request */}
-
-              <View style={styles.provinceListWrap}>
-                <ScrollView nestedScrollEnabled>
-                  {regions.map((r, i) => {
-                    const selected = region === r;
-                    return (
-                      <TouchableOpacity
-                        key={r}
-                        style={styles.provinceRow}
-                        onPress={() => setRegion(r)}
-                        activeOpacity={0.8}
-                      >
-                        <View style={styles.provinceIndex}>
-                          <Text style={styles.provinceIndexText}>
-                            {String(i + 1).padStart(2, '0')}
-                          </Text>
-                        </View>
-                        <Text style={styles.provinceText}>{r}</Text>
-                        <View style={styles.radioWrap}>
-                          {selected ? (
-                            <View style={styles.radioSelected} />
-                          ) : (
-                            <View style={styles.radio} />
-                          )}
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })}
+            <FieldCard
+              iconName="users"
+              label="Etnisidad"
+              sublabel="Ethnicity"
+              filled={ethnicity !== ''}
+            >
+              <View style={styles.listContainer}>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search"
+                  placeholderTextColor={COLORS.textSecondary}
+                  value={search}
+                  onChangeText={setSearch}
+                />
+                <ScrollView style={styles.optionsList} nestedScrollEnabled>
+                  {ethnicities
+                    .filter(e => e.toLowerCase().includes(search.toLowerCase()))
+                    .map(e => {
+                      const selected = ethnicity === e;
+                      return (
+                        <TouchableOpacity
+                          key={e}
+                          style={[
+                            styles.ethCard,
+                            selected && styles.ethCardSelected,
+                          ]}
+                          onPress={() => setEthnicity(e)}
+                          activeOpacity={0.8}
+                        >
+                          <View style={styles.ethLeft}>
+                            <Text
+                              style={[
+                                styles.ethText,
+                                selected && styles.ethTextSelected,
+                              ]}
+                            >
+                              {e}
+                            </Text>
+                          </View>
+                          <View style={styles.ethRight}>
+                            {selected ? (
+                              <View style={styles.selectedDot}>
+                                <Icon name="check" size={12} color="#fff" />
+                              </View>
+                            ) : (
+                              <View style={styles.unselectedDot} />
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
                 </ScrollView>
               </View>
-            </View>
-          </FieldCard>
-        </Animated.View>
+            </FieldCard>
 
-        {/* ── Completion hint ── */}
-        {!canProceed && (
-          <View style={styles.hintRow}>
-            <Icon name="info-circle" size={12} color={COLORS.primaryLight} />
-            <Text style={styles.hintText}>
-              Piliin ang parehong field para magpatuloy.
-            </Text>
-          </View>
-        )}
+            {/* ── Region field ── */}
+            <FieldCard
+              iconName="map-marker"
+              label="Lokasyon"
+              sublabel="Current Region"
+              filled={region !== ''}
+            >
+              <View style={styles.regionWrap}>
+                {/* Island group pills removed per design request */}
 
-        {/* ── CTA ── */}
-        <View style={styles.ctaWrap}>
-          {canProceed && (
-            <View style={styles.ctaOrnRow}>
-              <View style={styles.ornLine} />
-              <Text style={styles.ctaOrnText}>✦ HANDA NA ✦</Text>
-              <View style={styles.ornLine} />
+                <View style={styles.provinceListWrap}>
+                  <ScrollView nestedScrollEnabled>
+                    {regions.map((r, i) => {
+                      const selected = region === r;
+                      return (
+                        <TouchableOpacity
+                          key={r}
+                          style={[
+                            styles.provinceRow,
+                            selected && styles.provinceRowSelected,
+                          ]}
+                          onPress={() => setRegion(r)}
+                          activeOpacity={0.8}
+                        >
+                          <View style={styles.provinceIndex}>
+                            <Text style={styles.provinceIndexText}>
+                              {String(i + 1).padStart(2, '0')}
+                            </Text>
+                          </View>
+                          <Text style={styles.provinceText}>{r}</Text>
+                          <View style={styles.radioWrap}>
+                            {selected ? (
+                              <View style={styles.radioSelected} />
+                            ) : (
+                              <View style={styles.radio} />
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+              </View>
+            </FieldCard>
+          </Animated.View>
+
+          {/* ── Completion hint ── */}
+          {!canProceed && (
+            <View style={styles.hintRow}>
+              <Icon name="info-circle" size={12} color={COLORS.primaryLight} />
+              <Text style={styles.hintText}>
+                Piliin ang parehong field para magpatuloy.
+              </Text>
             </View>
           )}
-          <TouchableOpacity
-            style={[styles.ctaBtn, !canProceed && styles.ctaBtnDisabled]}
-            onPress={handleSave}
-            disabled={!canProceed}
-            activeOpacity={0.85}
-          >
-            <Text
-              style={[
-                styles.ctaBtnText,
-                !canProceed && styles.ctaBtnTextDisabled,
-              ]}
-            >
-              I-save at Magpatuloy
-            </Text>
-          </TouchableOpacity>
-        </View>
 
-        <View style={{ height: 60 }} />
-      </ScrollView>
+          {/* ── CTA ── */}
+          <View style={styles.ctaWrap}>
+            {canProceed && (
+              <View style={styles.ctaOrnRow}>
+                <View style={styles.ornLine} />
+                <Text style={styles.ctaOrnText}>✦ HANDA NA ✦</Text>
+                <View style={styles.ornLine} />
+              </View>
+            )}
+            <TouchableOpacity
+              style={[styles.ctaBtn, !canProceed && styles.ctaBtnDisabled]}
+              onPress={handleSave}
+              disabled={!canProceed}
+              activeOpacity={0.85}
+            >
+              <Text
+                style={[
+                  styles.ctaBtnText,
+                  !canProceed && styles.ctaBtnTextDisabled,
+                ]}
+              >
+                I-save at Magpatuloy
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ height: 60 }} />
+        </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -319,6 +335,14 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  backgroundImage: {
+    flex: 1,
+    paddingTop: 12,
+  },
+  backgroundImageStyle: {
+    opacity: 0.70,
+    resizeMode: 'cover',
   },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 4 },
@@ -418,6 +442,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.secondary,
     backgroundColor: COLORS.background,
+    paddingTop: 12,
   },
   pickerWrapFilled: {
     borderTopColor: '#f0d5c8',
@@ -482,6 +507,7 @@ const styles = StyleSheet.create({
   ctaBtnTextDisabled: {
     color: COLORS.textSecondary,
   },
+
   // ── New UI styles
   listContainer: {
     paddingHorizontal: 12,
@@ -513,10 +539,18 @@ const styles = StyleSheet.create({
   },
   ethCardSelected: {
     borderColor: COLORS.primary,
-    backgroundColor: '#fff6f2',
+    backgroundColor: '#f6e9e1',
   },
   ethLeft: { flexDirection: 'row', alignItems: 'center' },
-  ethText: { fontFamily: FONTS.PoppinsRegular, color: COLORS.primary, fontSize: 16, marginLeft: 4 },
+  ethText: {
+    fontFamily: FONTS.PoppinsRegular,
+    color: COLORS.primary,
+    fontSize: 16,
+    marginLeft: 4,
+  },
+  ethTextSelected: {
+    color: '#7a2d14',
+  },
   ethRight: { width: 36, alignItems: 'center', justifyContent: 'center' },
   selectedDot: {
     width: 22,
@@ -544,7 +578,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.secondary,
   },
-  provinceRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 6 },
+  provinceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  provinceRowSelected: {
+    borderColor: COLORS.primary,
+    backgroundColor: '#fff6f2',
+  },
   provinceIndex: {
     width: 44,
     height: 36,
@@ -555,7 +601,11 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   provinceIndexText: { fontFamily: FONTS.PoppinsBold, color: COLORS.primary },
-  provinceText: { flex: 1, fontFamily: FONTS.PoppinsRegular, color: COLORS.primary },
+  provinceText: {
+    flex: 1,
+    fontFamily: FONTS.PoppinsRegular,
+    color: COLORS.primary,
+  },
   radioWrap: { width: 36, alignItems: 'center' },
   radio: {
     width: 18,
@@ -564,5 +614,10 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: COLORS.secondary,
   },
-  radioSelected: { width: 18, height: 18, borderRadius: 9, backgroundColor: COLORS.primary },
+  radioSelected: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: COLORS.primary,
+  },
 });

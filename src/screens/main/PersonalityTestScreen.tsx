@@ -10,6 +10,7 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -18,6 +19,8 @@ import { COLORS } from '../../styles/colors';
 import { FONTS } from '../../styles/typography';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'PersonalityTest'>;
+
+const bayaniBackground = require('../../assets/images/bayaniBackground.png');
 
 // ── Questions ─────────────────────────────────────────────────────────────────
 const sampleQuestions = [
@@ -375,153 +378,159 @@ export default function PersonalityTestScreen({ navigation }: Props) {
         backgroundColor={COLORS.background}
         translucent={false}
       />
-
-      {/* ── Header ── */}
-      <Animated.View
-        style={[
-          styles.header,
-          { opacity: headerFade, transform: [{ translateY: headerSlide }] },
-        ]}
+      <ImageBackground
+        source={bayaniBackground}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
-        <TouchableOpacity
-          style={styles.backCircle}
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-left" size={16} color={COLORS.primary} />
-        </TouchableOpacity>
-
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerBaybayin}>ᜉᜋᜈ</Text>
-          <Text style={styles.headerTitle}>PAGSUBOK</Text>
-          <Text style={styles.headerSub}>
-            <Icon name="star" size={8} color={COLORS.primaryLight} /> Bayani
-            Assessment <Icon name="star" size={8} color={COLORS.primaryLight} />
-          </Text>
-        </View>
-
-        <TouchableOpacity
+        {/* ── Header ── */}
+        <Animated.View
           style={[
-            styles.submitButton,
-            !allAnswered && styles.submitButtonDisabled,
+            styles.header,
+            { opacity: headerFade, transform: [{ translateY: headerSlide }] },
           ]}
-          onPress={handleSubmit}
-          disabled={!allAnswered}
         >
-          <Icon
-            name="send"
-            size={13}
-            color={allAnswered ? COLORS.textContrast : COLORS.textSecondary}
-          />
-          <Text
-            style={[
-              styles.submitText,
-              !allAnswered && styles.submitTextDisabled,
-            ]}
+          <TouchableOpacity
+            style={styles.backCircle}
+            onPress={() => navigation.goBack()}
           >
-            {' '}
-            Isumite
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+            <Icon name="arrow-left" size={16} color={COLORS.primary} />
+          </TouchableOpacity>
 
-      {/* ── Baybayin strip ── */}
-      <BaybayinStrip />
-
-      {/* ── Step Indicators ── */}
-      <View style={styles.stepsContainer}>
-        {screenSteps.map((step, index) => (
-          <StepIndicator
-            key={step.id}
-            step={step}
-            isActive={index === CURRENT_SCREEN_INDEX}
-            isCompleted={index < CURRENT_SCREEN_INDEX}
-            isLast={index === screenSteps.length - 1}
-          />
-        ))}
-      </View>
-
-      {/* ── Progress Bar ── */}
-      <View style={styles.progressContainer}>
-        <View style={styles.progressMeta}>
-          <View style={styles.progressLabelRow}>
-            <Icon name="bar-chart" size={11} color={COLORS.primaryLight} />
-            <Text style={styles.progressLabel}> Katuparan</Text>
-          </View>
-          <Text style={styles.progressCount}>
-            {answeredCount}
-            <Text style={styles.progressTotal}>
-              {' '}
-              / {sampleQuestions.length}
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerBaybayin}>ᜉᜋᜈ</Text>
+            <Text style={styles.headerTitle}>PAGSUBOK</Text>
+            <Text style={styles.headerSub}>
+              <Icon name="star" size={8} color={COLORS.primaryLight} /> Bayani
+              Assessment{' '}
+              <Icon name="star" size={8} color={COLORS.primaryLight} />
             </Text>
-          </Text>
-        </View>
-        <View style={styles.progressBarBg}>
-          <View
-            style={[
-              styles.progressBarFill,
-              { width: `${progressPercentage}%` as any },
-            ]}
-          >
-            <View style={styles.progressSheen} />
           </View>
-        </View>
-        {/* Segment ticks */}
-        <View style={styles.tickRow}>
-          {sampleQuestions.map((_, i) => (
-            <View
-              key={i}
-              style={[styles.tick, i < answeredCount && styles.tickAnswered]}
+
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              !allAnswered && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={!allAnswered}
+          >
+            <Icon
+              name="send"
+              size={13}
+              color={allAnswered ? COLORS.textContrast : COLORS.textSecondary}
+            />
+            <Text
+              style={[
+                styles.submitText,
+                !allAnswered && styles.submitTextDisabled,
+              ]}
+            >
+              {' '}
+              Isumite
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* ── Baybayin strip ── */}
+        <BaybayinStrip />
+
+        {/* ── Step Indicators ── */}
+        <View style={styles.stepsContainer}>
+          {screenSteps.map((step, index) => (
+            <StepIndicator
+              key={step.id}
+              step={step}
+              isActive={index === CURRENT_SCREEN_INDEX}
+              isCompleted={index < CURRENT_SCREEN_INDEX}
+              isLast={index === screenSteps.length - 1}
             />
           ))}
         </View>
-      </View>
 
-      {/* ── Ornate divider ── */}
-      <View style={styles.ornamentDivider}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.dividerStar}>✦</Text>
-        <View style={styles.dividerLine} />
-      </View>
-
-      {/* ── Question List ── */}
-      <ScrollView
-        ref={scrollRef}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {sampleQuestions.map((question, index) => (
-          <QuestionCard
-            key={question.id}
-            question={question}
-            index={index}
-            isLast={index === sampleQuestions.length - 1}
-            answer={answers[question.id]}
-            onAnswer={handleAnswer}
-          />
-        ))}
-
-        {/* All-answered CTA */}
-        {allAnswered && (
-          <Animated.View style={styles.floatingCta}>
-            {/* Ornament above button */}
-            <View style={styles.ctaOrnamentRow}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.ctaOrnamentText}>✦ HANDA NA ✦</Text>
-              <View style={styles.dividerLine} />
+        {/* ── Progress Bar ── */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressMeta}>
+            <View style={styles.progressLabelRow}>
+              <Icon name="bar-chart" size={11} color={COLORS.primaryLight} />
+              <Text style={styles.progressLabel}> Katuparan</Text>
             </View>
-            <TouchableOpacity
-              style={styles.ctaBtn}
-              onPress={handleSubmit}
-              activeOpacity={0.85}
+            <Text style={styles.progressCount}>
+              {answeredCount}
+              <Text style={styles.progressTotal}>
+                {' '}
+                / {sampleQuestions.length}
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.progressBarBg}>
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${progressPercentage}%` as any },
+              ]}
             >
-              <Text style={styles.ctaBtnText}> Ihayag ang Aking Bayani</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
+              <View style={styles.progressSheen} />
+            </View>
+          </View>
+          {/* Segment ticks */}
+          <View style={styles.tickRow}>
+            {sampleQuestions.map((_, i) => (
+              <View
+                key={i}
+                style={[styles.tick, i < answeredCount && styles.tickAnswered]}
+              />
+            ))}
+          </View>
+        </View>
 
-        <View style={{ height: 40 }} />
-      </ScrollView>
+        {/* ── Ornate divider ── */}
+        <View style={styles.ornamentDivider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerStar}>✦</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* ── Question List ── */}
+        <ScrollView
+          ref={scrollRef}
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {sampleQuestions.map((question, index) => (
+            <QuestionCard
+              key={question.id}
+              question={question}
+              index={index}
+              isLast={index === sampleQuestions.length - 1}
+              answer={answers[question.id]}
+              onAnswer={handleAnswer}
+            />
+          ))}
+
+          {/* All-answered CTA */}
+          {allAnswered && (
+            <Animated.View style={styles.floatingCta}>
+              {/* Ornament above button */}
+              <View style={styles.ctaOrnamentRow}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.ctaOrnamentText}>✦ HANDA NA ✦</Text>
+                <View style={styles.dividerLine} />
+              </View>
+              <TouchableOpacity
+                style={styles.ctaBtn}
+                onPress={handleSubmit}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.ctaBtnText}> Ihayag ang Aking Bayani</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -533,6 +542,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  backgroundImage: {
+    flex: 1,
+    paddingTop: 12,
+  },
+  backgroundImageStyle: {
+    opacity: 0.70,
+    resizeMode: 'cover',
   },
 
   // ── Baybayin Strip ──

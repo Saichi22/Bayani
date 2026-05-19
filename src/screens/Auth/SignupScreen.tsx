@@ -103,6 +103,7 @@ const SignupScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
+    paddingTop: 28,
     paddingHorizontal: 20,
     backgroundColor: '#333', // added a background since text is white
     flexGrow: 1,

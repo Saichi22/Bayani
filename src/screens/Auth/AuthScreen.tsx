@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: BG,
     alignItems: 'center',
     justifyContent: 'space-between', // text top, image bottom
+    paddingTop: 12,
   },
   textBlock: {
     alignItems: 'center',

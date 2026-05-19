@@ -12,6 +12,7 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -24,6 +25,8 @@ import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'Camera'>;
+
+const bayaniBackground = require('../../assets/images/bayaniBackground.png');
 
 // ── Tip row ───────────────────────────────────────────────────────────────────
 function TipRow({ iconName, text }: { iconName: string; text: string }) {
@@ -172,154 +175,157 @@ export default function CameraScreen({ navigation }: Props) {
         translucent={false}
       />
 
-      {/* ── Shared header — step 2 (0-based) = 75 % progress ── */}
-      <AssessmentHeader
-        currentStep={2}
-        title="LARAWAN"
-        baybayinLabel="ᜎᜇᜏᜈ᜔"
-        subtitle="★ AI Face Transform ★"
-        onBack={() => navigation.goBack()}
-        actionLabel={photoUri ? 'Susunod' : undefined}
-        actionEnabled={!!photoUri}
-        onAction={handleTransform}
-        actionIconName="arrow-right"
-      />
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <ImageBackground
+        source={bayaniBackground}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
-        <Animated.View
-          style={{
-            opacity: contentFade,
-            transform: [{ translateY: contentSlide }],
-          }}
+        {/* ── Shared header — step 2 (0-based) = 75 % progress ── */}
+        <AssessmentHeader
+          currentStep={2}
+          title="LARAWAN"
+          baybayinLabel="ᜎᜇᜏᜈ᜔"
+          subtitle="★ AI Face Transform ★"
+          onBack={() => navigation.goBack()}
+          actionLabel={photoUri ? 'Susunod' : undefined}
+          actionEnabled={!!photoUri}
+          onAction={handleTransform}
+          actionIconName="arrow-right"
+        />
+
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          {/* ── Intro card ── */}
-          <View style={styles.introCard}>
-            <View style={styles.cardOrnRow}>
-              <View style={styles.cardOrnLine} />
-              <Text style={styles.cardOrnStar}>✦</Text>
-              <View style={styles.cardOrnLine} />
-            </View>
-            <Text style={styles.introTitle}>
-              Maging Bayani{'\n'}sa Isang Kisap-Mata
-            </Text>
-            <Text style={styles.introBody}>
-              Our AI will transform your photo into the likeness of your matched
-              historical Filipino hero.
-            </Text>
-          </View>
-
-          {/* ── Camera viewfinder ── */}
-          <View style={[styles.viewfinder, photoUri && styles.viewfinderDone]}>
-            {/* Corner brackets */}
-            <View style={[styles.corner, styles.cornerTL]} />
-            <View style={[styles.corner, styles.cornerTR]} />
-            <View style={[styles.corner, styles.cornerBL]} />
-            <View style={[styles.corner, styles.cornerBR]} />
-
-            {photoUri ? (
-              <Image source={{ uri: photoUri }} style={styles.previewImage} />
-            ) : (
-              <View style={styles.idleState}>
-                <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-                  <View style={styles.cameraIconCircle}>
-                    <Icon name="camera" size={36} color={COLORS.primary} />
-                  </View>
-                </Animated.View>
-                <Text style={styles.idleLabel}>Camera Preview</Text>
-                <Text style={styles.idleSublabel}>
-                  Ilagay ang iyong mukha sa loob ng frame
-                </Text>
+          <Animated.View
+            style={{
+              opacity: contentFade,
+              transform: [{ translateY: contentSlide }],
+            }}
+          >
+            {/* ── Intro card ── */}
+            <View style={styles.introCard}>
+              <View style={styles.cardOrnRow}>
+                <View style={styles.cardOrnLine} />
+                <Text style={styles.cardOrnStar}>✦</Text>
+                <View style={styles.cardOrnLine} />
               </View>
-            )}
-          </View>
-
-          {/* ── Tips ── */}
-          {!photoUri && (
-            <View style={styles.tipsCard}>
-              <View style={styles.tipsHeader}>
-                <Icon
-                  name="lightbulb-o"
-                  size={13}
-                  color={COLORS.primaryLight}
-                />
-                <Text style={styles.tipsTitle}> MGA TIPS</Text>
-              </View>
-              <TipRow
-                iconName="sun-o"
-                text="Siguraduhing maliwanag ang iyong paligid."
-              />
-              <TipRow iconName="eye" text="Tingnan nang diretso ang camera." />
-              <TipRow iconName="user" text="Ipakita ang iyong buong mukha." />
-            </View>
-          )}
-
-          {/* ── Buttons ── */}
-          <View style={styles.btnGroup}>
-            <TouchableOpacity
-              style={[
-                styles.primaryBtn,
-                photoUri && styles.secondaryOutlineBtn,
-              ]}
-              onPress={handleTakePhoto}
-              activeOpacity={0.85}
-              disabled={isLoading}
-            >
-              <Icon
-                name={photoUri ? 'repeat' : 'camera'}
-                size={16}
-                color={photoUri ? COLORS.primary : COLORS.textContrast}
-              />
-              <Text
-                style={[
-                  styles.primaryBtnText,
-                  photoUri && styles.secondaryOutlineBtnText,
-                ]}
-              >
-                {' '}
-                {photoUri ? 'Kumuha Ulit' : 'Kumuha ng Larawan'}
+              <Text style={styles.introTitle}>
+                Maging Bayani{'sa Isang Kisap-Mata'}
               </Text>
-            </TouchableOpacity>
+              <Text style={styles.introBody}>
+                Our AI will transform your photo into the likeness of your matched
+                historical Filipino hero.
+              </Text>
+            </View>
 
-            {photoUri && (
-              <>
-                <View style={styles.ctaOrnRow}>
-                  <View style={styles.ornLine} />
-                  <Text style={styles.ctaOrnText}>✦ HANDA NA ✦</Text>
-                  <View style={styles.ornLine} />
+            {/* ── Camera viewfinder ── */}
+            <View style={[styles.viewfinder, photoUri && styles.viewfinderDone]}>
+              {/* Corner brackets */}
+              <View style={[styles.corner, styles.cornerTL]} />
+              <View style={[styles.corner, styles.cornerTR]} />
+              <View style={[styles.corner, styles.cornerBL]} />
+              <View style={[styles.corner, styles.cornerBR]} />
+
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.previewImage} />
+              ) : (
+                <View style={styles.idleState}>
+                  <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                    <View style={styles.cameraIconCircle}>
+                      <Icon name="camera" size={36} color={COLORS.primary} />
+                    </View>
+                  </Animated.View>
+                  <Text style={styles.idleLabel}>Camera Preview</Text>
+                  <Text style={styles.idleSublabel}>
+                    Ilagay ang iyong mukha sa loob ng frame
+                  </Text>
                 </View>
+              )}
+            </View>
 
-                {isLoading ? (
-                  <View style={styles.loadingBtn}>
-                    <ActivityIndicator
-                      size="small"
-                      color={COLORS.textContrast}
-                    />
-                    <Text style={styles.primaryBtnText}> Ginagawa...</Text>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.primaryBtn}
-                    onPress={handleTransform}
-                    activeOpacity={0.85}
-                  >
-                    <Icon name="magic" size={15} color={COLORS.textContrast} />
-                    <Text style={styles.primaryBtnText}>
-                      {' '}
-                      I-transform sa Bayani
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </>
+            {/* ── Tips ── */}
+            {!photoUri && (
+              <View style={styles.tipsCard}>
+                <View style={styles.tipsHeader}>
+                  <Icon
+                    name="lightbulb-o"
+                    size={13}
+                    color={COLORS.primaryLight}
+                  />
+                  <Text style={styles.tipsTitle}> MGA TIPS</Text>
+                </View>
+                <TipRow
+                  iconName="sun-o"
+                  text="Siguraduhing maliwanag ang iyong paligid."
+                />
+                <TipRow iconName="eye" text="Tingnan nang diretso ang camera." />
+                <TipRow iconName="user" text="Ipakita ang iyong buong mukha." />
+              </View>
             )}
-          </View>
-        </Animated.View>
 
-        <View style={{ height: 60 }} />
-      </ScrollView>
+            {/* ── Buttons ── */}
+            <View style={styles.btnGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.primaryBtn,
+                  photoUri && styles.secondaryOutlineBtn,
+                ]}
+                onPress={handleTakePhoto}
+                activeOpacity={0.85}
+                disabled={isLoading}
+              >
+                <Icon
+                  name={photoUri ? 'repeat' : 'camera'}
+                  size={16}
+                  color={photoUri ? COLORS.primary : COLORS.textContrast}
+                />
+                <Text
+                  style={[
+                    styles.primaryBtnText,
+                    photoUri && styles.secondaryOutlineBtnText,
+                  ]}
+                >
+                  {' '}
+                  {photoUri ? 'Kumuha Ulit' : 'Kumuha ng Larawan'}
+                </Text>
+              </TouchableOpacity>
+
+              {photoUri && (
+                <>
+                  <View style={styles.ctaOrnRow}>
+                    <View style={styles.ornLine} />
+                    <Text style={styles.ctaOrnText}>✦ HANDA NA ✦</Text>
+                    <View style={styles.ornLine} />
+                  </View>
+
+                  {isLoading ? (
+                    <View style={styles.loadingBtn}>
+                      <ActivityIndicator size="small" color={COLORS.textContrast} />
+                      <Text style={styles.primaryBtnText}> Ginagawa...</Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.primaryBtn}
+                      onPress={handleTransform}
+                      activeOpacity={0.85}
+                    >
+                      <Icon name="magic" size={15} color={COLORS.textContrast} />
+                      <Text style={styles.primaryBtnText}>
+                        {' '}
+                        I-transform sa Bayani
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </>
+              )}
+            </View>
+          </Animated.View>
+
+          <View style={{ height: 60 }} />
+        </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -327,6 +333,14 @@ export default function CameraScreen({ navigation }: Props) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
+  backgroundImage: {
+    flex: 1,
+    paddingTop: 12,
+  },
+  backgroundImageStyle: {
+    opacity: 0.70,
+    resizeMode: 'cover',
+  },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 4 },
 

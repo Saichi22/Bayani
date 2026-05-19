@@ -349,6 +349,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.background,
+    paddingTop: 12,
   },
 
   // ── Top Bar ──

@@ -188,6 +188,10 @@ function AssessmentScreen() {
     }
   };
 
+  const handleNavigate = <T extends keyof MainStackParamList>(screen: T) => {
+    navigation.navigate(screen);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar
@@ -320,7 +324,7 @@ function AssessmentScreen() {
           <TouchableOpacity
             key={card.id}
             style={[styles.navCard, card.primary && styles.navCardPrimary]}
-            onPress={() => navigation.navigate(card.screen)}
+            onPress={() => handleNavigate(card.screen)}
             activeOpacity={0.85}
           >
             <View
@@ -376,6 +380,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.background,
+    paddingTop: 12,
   },
 
   // ── Top Bar ──

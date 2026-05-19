@@ -1,15 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// demographicScoring.ts
-// Maps a user's ethnicity and region selections to hero point bonuses.
-//
-// Rules:
-//   - Ethnicity match  → +1 point per matched hero  (DEMO part weight)
-//   - Region match     → +1 point per matched hero  (DEMO part weight)
-//   - Both match       → +2 points total (bonuses stack naturally)
-//
-// Store-agnostic — call awardHeroPoints() from useHeroScoring in the screen.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { HeroKey, HeroScoreMap, awardPoints } from './heroScoring';
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
@@ -69,16 +57,13 @@ export const ETHNICITY_HERO_MAP: Record<string, HeroKey[]> = {
     'jose_ma_panganiban',   // Mambulao, Camarines Norte — Filipino/Bicolano
   ],
 
-  // Igorot: no current heroes with Cordillera ethnicity in the dataset
   Igorot: [],
 
-  // Moro: Rajah Sulayman had Islamic/pre-colonial Manila ties
   Moro: [
     'rajah_sulayman',
     'lakandula',
   ],
 
-  // "Other" catches all mixed or unlisted ethnicity — no hero bonus
   Other: [],
 };
 

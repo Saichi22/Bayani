@@ -84,8 +84,8 @@ export type AssessmentPart =
  */
 export const POINTS_PER_PART: Record<AssessmentPart, number> = {
   PART_1: 1,
-  PART_2: 2,
-  PART_3: 3,
+  PART_2: 1,
+  PART_3: 1,
   DEMO: 1,
 };
 

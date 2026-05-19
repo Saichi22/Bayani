@@ -1,66 +1,236 @@
 // filepath: src/screens/main/ProfileScreen.tsx
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  ImageBackground,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../../navigation/types';
-import { useAuth } from '../../navigation/RootNavigator';
+import { useAuthStore } from '../../store/authStore';
+import { COLORS } from '../../styles/colors';
+import { FONTS } from '../../styles/typography';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Profile'>;
 
+const bayaniBackground = require('../../assets/images/bayaniBackground.png');
+const heroPreview = require('../../assets/images/hero.png');
+const demographicsPreview = require('../../assets/images/bayaniPortrait.png');
+const savedPreview = require('../../assets/images/portrait.png');
+
+const PROFILE_CARDS = [
+  {
+    id: 'hero-match',
+    title: 'Your Hero Match',
+    subtitle: 'Complete the assessment to see your match.',
+    tag: 'ILUSTRADO',
+    meta: 'Assessment',
+    image: heroPreview,
+  },
+  {
+    id: 'demographics',
+    title: 'Demographics',
+    subtitle: 'Set your profile to refine matches.',
+    tag: 'PROFILE',
+    meta: 'Profile Setup',
+    image: demographicsPreview,
+  },
+  {
+    id: 'saved-heroes',
+    title: 'Saved Heroes',
+    subtitle: 'Your hero collection.',
+    tag: 'COLLECTION',
+    meta: 'Library',
+    image: savedPreview,
+  },
+];
+
 function ProfileScreen() {
-  const { logout } = useAuth();
+  const logout = useAuthStore(state => state.logout);
+  const user = useAuthStore(state => state.user);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Your Hero Match</Text>
-        <Text style={styles.placeholder}>Complete the assessment to see your match</Text>
-      </View>
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Demographics</Text>
-        <Text style={styles.placeholder}>Set your profile to refine matches</Text>
-      </View>
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Saved Heroes</Text>
-        <Text style={styles.placeholder}>Your hero collection</Text>
-      </View>
-      
-      <Button title="Logout" onPress={logout} />
-    </View>
+    <SafeAreaView style={styles.root}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background}
+        translucent={false}
+      />
+      <ImageBackground
+        source={bayaniBackground}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
+      >
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.headerWrap}>
+            <Text style={styles.headerTitle}>Profile</Text>
+            <Text style={styles.headerSubtitle}>Your Bayani journey</Text>
+            <Text style={styles.greetingText}>
+              Mabuhay, {user?.name || 'Bayani'}!
+            </Text>
+          </View>
+
+          {PROFILE_CARDS.map(card => (
+            <View key={card.id} style={styles.profileCard}>
+              <View style={styles.cardImageWrap}>
+                <Image source={card.image} style={styles.cardImage} />
+                <View style={styles.cardImageOverlay} />
+                <View style={styles.cardTag}>
+                  <Text style={styles.cardTagText}>{card.tag}</Text>
+                </View>
+              </View>
+              <View style={styles.cardMetaWrap}>
+                <Text style={styles.cardMeta}>{card.meta}</Text>
+                <Text style={styles.cardTitle}>{card.title}</Text>
+                <Text style={styles.cardSubtitle}>{card.subtitle}</Text>
+              </View>
+            </View>
+          ))}
+
+          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </ImageBackground>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    padding: 20,
-    paddingTop: 32,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.background,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginTop: 50,
-    marginBottom: 30,
+  backgroundImage: {
+    flex: 1,
+    paddingTop: 12,
   },
-  section: {
-    backgroundColor: '#f5f5f5',
+  backgroundImageStyle: {
+    opacity: 0.70,
+    resizeMode: 'cover',
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 24,
+  },
+  headerWrap: {
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontFamily: FONTS.kawitBold,
+    fontSize: 24,
+    color: COLORS.primary,
+    letterSpacing: 2,
+  },
+  headerSubtitle: {
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 4,
+  },
+  greetingText: {
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 16,
+    color: COLORS.primary,
+    marginTop: 10,
+    letterSpacing: 0.4,
+  },
+  profileCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+  },
+  cardImageWrap: {
+    height: 140,
+    backgroundColor: COLORS.background,
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  cardImageOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  cardTag: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: COLORS.primary,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
     borderRadius: 12,
-    padding: 20,
-    marginBottom: 15,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  cardTagText: {
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 10,
+    color: COLORS.textContrast,
+    letterSpacing: 1,
   },
-  placeholder: {
+  cardMetaWrap: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  cardMeta: {
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 10,
+    color: COLORS.primaryLight,
+    letterSpacing: 1,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+  },
+  cardTitle: {
+    fontFamily: FONTS.kawitBold,
+    fontSize: 16,
+    color: COLORS.primary,
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+  },
+  logoutButton: {
+    marginTop: 8,
+    backgroundColor: COLORS.primary,
+    borderRadius: 50,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+  },
+  logoutText: {
+    fontFamily: FONTS.PoppinsBold,
     fontSize: 14,
-    color: '#666',
+    color: COLORS.textContrast,
+    letterSpacing: 0.5,
   },
 });
 

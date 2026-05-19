@@ -38,9 +38,7 @@ const HEROES = [
     subtitle: 'Father of the Revolution',
     tag: 'KATIPUNAN',
     era: '1863–1897',
-    image: {
-      uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Andres_Bonifacio.jpg/440px-Andres_Bonifacio.jpg',
-    },
+    image: require('../../assets/images/andresBonifacioPortrait.png'),
   },
   {
     id: '3',
@@ -48,9 +46,7 @@ const HEROES = [
     subtitle: 'Ilocos Revolt Leader',
     tag: 'WARRIOR',
     era: '1731–1763',
-    image: {
-      uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Gabriela_Cariño_Silang.jpg/440px-Gabriela_Cariño_Silang.jpg',
-    },
+    image: require('../../assets/images/gabrielaSilangPortrait.png'),
   },
 ];
 

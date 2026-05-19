@@ -20,11 +20,16 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  heroScores: Record<string, number>;
+  points: number;
   signIn: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
+  addHeroPoints: (hero: string, points: number) => void;
+  setHeroScores: (scores: Record<string, number>) => void;
+  resetPoints: () => void;
 }
 
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
@@ -37,6 +42,26 @@ export const useAuthStore = create<AuthState>(set => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
+  heroScores: {},
+  points: 0,
+
+  addHeroPoints: (hero, points) =>
+    set(state => {
+      const nextScores = { ...state.heroScores };
+      nextScores[hero] = (nextScores[hero] ?? 0) + points;
+      return {
+        heroScores: nextScores,
+        points: state.points + points,
+      };
+    }),
+
+  setHeroScores: scores =>
+    set(() => ({
+      heroScores: { ...scores },
+      points: Object.values(scores).reduce((total, value) => total + value, 0),
+    })),
+
+  resetPoints: () => set({ heroScores: {}, points: 0 }),
 
   signIn: async (email, password) => {
     try {

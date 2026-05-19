@@ -5,16 +5,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useCallback } from 'react';
-import { useAuthStore } from '../store/authStore'; // ← adjust path as needed
+import { useAuthStore } from '../store/authStore';
 
 import {
   HeroKey,
   HeroScoreMap,
   ScoredQuestion,
-  AssessmentPart,
-} from './heroScoring.types';
 
-import {
   processAnswer,
   processAllAnswers,
   awardPoints,
@@ -25,7 +22,7 @@ import {
   mergeScores,
   totalPoints,
   resolvePoints,
-} from './heroScoring.engine';
+} from '../store/heroScoring';
 
 // ─────────────────────────────────────────────────────────────────────────────
 

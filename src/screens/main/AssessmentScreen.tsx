@@ -188,8 +188,8 @@ function AssessmentScreen() {
     }
   };
 
-  const handleNavigate = (screen: keyof MainStackParamList) => {
-    navigation.navigate(screen as never);
+  const handleNavigate = <T extends keyof MainStackParamList>(screen: T) => {
+    navigation.navigate(screen);
   };
 
   return (

@@ -27,9 +27,9 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function useHeroScoring() {
-  const heroScores   = useAuthStore(s => s.heroScores) as HeroScoreMap;
+  const heroScores    = useAuthStore(s => s.heroScores) as HeroScoreMap;
   const setHeroScores = useAuthStore(s => s.setHeroScores);
-  const resetPoints  = useAuthStore(s => s.resetPoints);
+  const resetPoints   = useAuthStore(s => s.resetPoints);
 
   // ── Single-answer recording ───────────────────────────────────────────────
 
@@ -170,6 +170,10 @@ export function useHeroScoring() {
     total,
     ranked,
     primaryHero,
+
+    // Raw store setter — used by DemographicProfileScreen to commit the
+    // demographic bonus atomically without going through processAnswer.
+    setHeroScores,
 
     // Actions
     recordAnswer,

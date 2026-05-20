@@ -18,6 +18,8 @@ import { MainStackParamList } from '../../navigation/types';
 import { COLORS } from '../../styles/colors';
 import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
+import { useHeroScoring } from '../../hooks/useHeroScoring';
+import { applyDemographicBonuses } from '../../store/demographicScoring';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'DemographicProfile'>;
 
@@ -101,6 +103,12 @@ export default function DemographicProfileScreen({ navigation }: Props) {
   const [region, setRegion] = useState('');
   const [search, setSearch] = useState('');
 
+  // ── Scoring hook ──────────────────────────────────────────────────────────
+  // heroScores holds the running score map from PersonalityTestScreen.
+  // We call setHeroScores directly after applying demographic bonuses so that
+  // HeroResultScreen sees the fully-merged score map.
+  const { heroScores, setHeroScores } = useHeroScoring();
+
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(24)).current;
 
@@ -124,7 +132,14 @@ export default function DemographicProfileScreen({ navigation }: Props) {
   const canProceed = ethnicity !== '' && region !== '';
 
   const handleSave = () => {
-    if (canProceed) navigation.navigate('Camera');
+    if (!canProceed) return;
+
+    // Apply ethnicity + region bonuses to the scores that were built up
+    // during PersonalityTestScreen, then commit to the store in one shot.
+    const updated = applyDemographicBonuses(heroScores, ethnicity, region);
+    setHeroScores(updated);
+
+    navigation.navigate('Camera');
   };
 
   return (
@@ -249,8 +264,6 @@ export default function DemographicProfileScreen({ navigation }: Props) {
               filled={region !== ''}
             >
               <View style={styles.regionWrap}>
-                {/* Island group pills removed per design request */}
-
                 <View style={styles.provinceListWrap}>
                   <ScrollView nestedScrollEnabled>
                     {regions.map((r, i) => {
@@ -448,11 +461,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#f0d5c8',
     backgroundColor: '#fff5f0',
   },
-  picker: {
-    height: 52,
-    color: COLORS.textSecondary,
-    fontFamily: FONTS.PoppinsRegular,
-  },
 
   // ── Hint ──
   hintRow: {
@@ -508,7 +516,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
 
-  // ── New UI styles
+  // ── New UI styles ──
   listContainer: {
     paddingHorizontal: 12,
     paddingBottom: 8,
@@ -569,7 +577,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   regionWrap: { paddingHorizontal: 12, paddingBottom: 8 },
-  /* island pills removed */
   provinceListWrap: {
     backgroundColor: '#fff',
     borderRadius: 12,

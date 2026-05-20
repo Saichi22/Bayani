@@ -20,6 +20,7 @@ import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
 import { useHeroScoring } from '../../hooks/useHeroScoring';
 import { applyDemographicBonuses } from '../../store/demographicScoring';
+import { sendAssessmentPayload } from '../../services/assessmentPayload'
 
 type Props = NativeStackScreenProps<MainStackParamList, 'DemographicProfile'>;
 
@@ -102,6 +103,7 @@ export default function DemographicProfileScreen({ navigation }: Props) {
   const [ethnicity, setEthnicity] = useState('');
   const [region, setRegion] = useState('');
   const [search, setSearch] = useState('');
+  const [isSaving, setIsSaving] = useState(false)
 
   // ── Scoring hook ──────────────────────────────────────────────────────────
   // heroScores holds the running score map from PersonalityTestScreen.
@@ -131,16 +133,29 @@ export default function DemographicProfileScreen({ navigation }: Props) {
 
   const canProceed = ethnicity !== '' && region !== '';
 
-  const handleSave = () => {
-    if (!canProceed) return;
-
-    // Apply ethnicity + region bonuses to the scores that were built up
-    // during PersonalityTestScreen, then commit to the store in one shot.
+  const handleSave = async () => {
+  if (!canProceed || isSaving) return;
+ 
+  setIsSaving(true);
+  try {
+    // Apply ethnicity + region bonuses to the personality-test scores.
     const updated = applyDemographicBonuses(heroScores, ethnicity, region);
+ 
+    // Commit the merged scores to the store so HeroResultScreen sees them.
     setHeroScores(updated);
-
+ 
+    // Fire-and-forget: send to backend. We don't block navigation on failure.
+    sendAssessmentPayload(updated, ethnicity, region).then(result => {
+      if (!result.success && __DEV__) {
+        console.warn('[DemographicProfileScreen] Payload send failed:', result.error);
+      }
+    });
+ 
     navigation.navigate('Camera');
-  };
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   return (
     <SafeAreaView style={styles.root}>

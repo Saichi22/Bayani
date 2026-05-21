@@ -29,19 +29,19 @@ const HOW_IT_WORKS = [
   {
     id: '1',
     iconName: 'question-circle',
-    title: 'Sumagot ng mga Tanong',
+    title: 'Answer the Questions',
     body: 'Answer situational dilemmas drawn from real historical events.',
   },
   {
     id: '2',
     iconName: 'shield',
-    title: 'Piliin ang Iyong Landas',
+    title: 'Choose Your Path',
     body: 'Choose between courage in combat or wisdom in command.',
   },
   {
     id: '3',
     iconName: 'trophy',
-    title: 'Makilala ang Iyong Bayani',
+    title: 'Meet Your Hero',
     body: 'Get matched with a historical Filipino hero who shares your spirit.',
   },
 ];
@@ -51,7 +51,7 @@ const NAV_CARDS = [
   {
     id: 'test',
     iconName: 'pencil',
-    label: 'Simulan ang Pagsubok',
+    label: 'Start Test',
     sublabel: 'Personality Test',
     screen: 'PersonalityTest' as keyof MainStackParamList,
     primary: true,
@@ -59,7 +59,7 @@ const NAV_CARDS = [
   {
     id: 'demo',
     iconName: 'user',
-    label: 'Itakda ang Propilo',
+    label: 'Set Up Profile',
     sublabel: 'Demographic Profile',
     screen: 'DemographicProfile' as keyof MainStackParamList,
     primary: false,
@@ -188,8 +188,8 @@ function AssessmentScreen() {
     }
   };
 
-  const handleNavigate = <T extends keyof MainStackParamList>(screen: T) => {
-    navigation.navigate(screen);
+  const handleNavigate = (screen: keyof MainStackParamList) => {
+    navigation.navigate(screen as any);
   };
 
   return (
@@ -253,8 +253,8 @@ function AssessmentScreen() {
             <View style={styles.ornLine} />
           </View>
 
-          <Text style={styles.bannerTagline}>Alamin ang Iyong</Text>
-          <Text style={styles.bannerTitle}>PAGKATAO</Text>
+          <Text style={styles.bannerTagline}>Discover Your</Text>
+          <Text style={styles.bannerTitle}>PERSONALITY</Text>
           <Text style={styles.bannerDots}>✦ ✦ ✦</Text>
         </ImageBackground>
 
@@ -273,7 +273,7 @@ function AssessmentScreen() {
           </View>
 
           <Text style={styles.introTitle}>
-            Sino ang Bayani{'\n'}sa Iyong Puso?
+            Who is the Bayani{'\n'}In Your Heart?
           </Text>
           <Text style={styles.introBody}>
             Discover which historical Filipino hero matches your personality
@@ -283,9 +283,9 @@ function AssessmentScreen() {
           {/* Stats pill row */}
           <View style={styles.statsPillRow}>
             {[
-              { icon: 'clock-o', value: '5 min', label: 'Tagal' },
-              { icon: 'list-ul', value: '5', label: 'Tanong' },
-              { icon: 'users', value: '150+', label: 'Bayani' },
+              { icon: 'clock-o', value: '5 min', label: 'Duration' },
+              { icon: 'list-ul', value: '5', label: 'Questions' },
+              { icon: 'users', value: '150+', label: 'Heroes' },
             ].map((s, i) => (
               <View key={i} style={styles.statPill}>
                 <Icon name={s.icon} size={13} color={COLORS.primaryLight} />
@@ -299,7 +299,7 @@ function AssessmentScreen() {
         {/* ── How it works ── */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionBay}>ᜉᜄ᜔ᜐᜓᜊᜓᜃ᜔</Text>
-          <Text style={styles.sectionTitle}>Paano Ito Gumagana</Text>
+          <Text style={styles.sectionTitle}>How It Works</Text>
         </View>
 
         <View style={styles.stepsWrap}>
@@ -317,7 +317,7 @@ function AssessmentScreen() {
         {/* ── CTA cards ── */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionBay}>ᜊᜌᜈᜒ</Text>
-          <Text style={styles.sectionTitle}>Magsimula Na</Text>
+          <Text style={styles.sectionTitle}>Get Started</Text>
         </View>
 
         {NAV_CARDS.map(card => (

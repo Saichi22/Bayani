@@ -139,7 +139,7 @@ function FactCard({ text }: { text: string }) {
       <View style={styles.factContent}>
         <View style={styles.factHeaderRow}>
           <Text style={styles.factDot}>✦</Text>
-          <Text style={styles.factLabel}>ALAM MO BA?</Text>
+          <Text style={styles.factLabel}>DID YOU KNOW?</Text>
           <Text style={styles.factDot}>✦</Text>
         </View>
         <Text style={styles.factText}>{text}</Text>
@@ -266,7 +266,7 @@ export default function HomeScreen({ navigation }: Props) {
               <View style={styles.ornamentLine} />
             </View>
 
-            <Text style={styles.bannerTagline}>Ang Kasaysayan ng</Text>
+            <Text style={styles.bannerTagline}>The History of</Text>
             <Text style={styles.bannerTitle}>BAYANI</Text>
 
             <View style={styles.bannerBottomOrnament}>
@@ -290,11 +290,11 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
 
             <Text style={styles.discoverTitle}>
-              Tuklasin ang{'\n'}Inyong Pamana
+                Discover Your{'\n'}Heritage
             </Text>
             <Text style={styles.discoverBody}>
-              Isang paglalakbay sa kasaysayan ng Pilipinas. Kilalanin ang mga
-              bayaning nagbuwis ng buhay para sa kalayaan.
+                A journey through the history of the Philippines. Meet the
+                heroes who sacrificed their lives for freedom.
             </Text>
 
             <StatsRow />
@@ -305,7 +305,7 @@ export default function HomeScreen({ navigation }: Props) {
               activeOpacity={0.85}
             >
               <Text style={styles.ctaBtnOrnament}>✦ </Text>
-              <Text style={styles.ctaBtnText}>Simulan ang Pagtatasa</Text>
+              <Text style={styles.ctaBtnText}>Start Assessment</Text>
               <Text style={styles.ctaBtnOrnament}> ✦</Text>
             </TouchableOpacity>
           </View>
@@ -317,7 +317,7 @@ export default function HomeScreen({ navigation }: Props) {
               <Text style={styles.sectionTitle}>Featured Heroes</Text>
             </View>
             <TouchableOpacity style={styles.seeAllBtn}>
-              <Text style={styles.seeAllText}>LAHAT ▸</Text>
+              <Text style={styles.seeAllText}>SEE ALL ▸</Text>
             </TouchableOpacity>
           </View>
 

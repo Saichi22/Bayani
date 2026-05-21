@@ -23,6 +23,7 @@ import { useAuthStore } from '../../store/authStore';
 import { COLORS } from '../../styles/colors';
 import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
+import { useHeroScoring } from '../../hooks/useHeroScoring';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'Camera'>;
 
@@ -46,6 +47,7 @@ export default function CameraScreen({ navigation }: Props) {
   const [base64Data, setBase64Data] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const user = useAuthStore(state => state.user);
+  const { heroScores, awardHeroPoints } = useHeroScoring();
 
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(24)).current;
@@ -133,14 +135,16 @@ export default function CameraScreen({ navigation }: Props) {
     try {
       const base64Photo = `data:image/jpeg;base64,${base64Data}`;
 
-      const response = await api.post('/mashup/generate-rizal', {
+      const response = await api.post('/mashup/generate', {
         userId: user?.id || 'anonymous',
         base64Photo,
+        heroScores,
       });
 
       const mashupId = response.data.id;
       let status = 'PENDING';
       let imageUrl = null;
+      let heroKey = null;
 
       while (status === 'PENDING') {
         await new Promise(resolve => setTimeout(() => resolve(null), 5000));
@@ -150,9 +154,15 @@ export default function CameraScreen({ navigation }: Props) {
 
         if (status === 'COMPLETED') {
           imageUrl = checkRes.data.imageUrl;
+          heroKey = checkRes.data.heroKey;
         } else if (status === 'FAILED') {
           throw new Error('Image generation failed');
         }
+      }
+
+      if (heroKey) {
+        // Award 1 point to the chosen hero to break any visual ties locally
+        awardHeroPoints([heroKey], 1);
       }
 
       navigation.navigate('HeroResult', { imageUrl });

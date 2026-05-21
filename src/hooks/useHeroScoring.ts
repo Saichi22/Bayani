@@ -43,12 +43,13 @@ export function useHeroScoring() {
    * recordAnswer(question, selectedOptionId);
    */
   const recordAnswer = useCallback(
-    (question: ScoredQuestion, optionId: string) => {
-      const updated = processAnswer(heroScores, question, optionId);
-      setHeroScores(updated);
-    },
-    [heroScores, setHeroScores],
-  );
+  (question: ScoredQuestion, optionId: string) => {
+    const current = useAuthStore.getState().heroScores as HeroScoreMap;
+    const updated = processAnswer(current, question, optionId);
+    setHeroScores(updated);
+  },
+  [setHeroScores],
+);
 
   /**
    * Call this when the user CHANGES a previous answer.
@@ -59,51 +60,32 @@ export function useHeroScoring() {
    * replaceAnswer(question, 'A', 'C'); // was A, now C
    */
   const replaceAnswer = useCallback(
-    (
-      question: ScoredQuestion,
-      previousOptionId: string,
-      newOptionId: string,
-    ) => {
-      const pts = resolvePoints(question.part, question.pointOverride);
-
-      // Subtract old answer's heroes
-      const prevOption = question.options.find(o => o.id === previousOptionId);
-      let working = { ...heroScores };
-      if (prevOption) {
-        for (const hero of prevOption.heroes) {
-          working[hero] = Math.max(0, (working[hero] ?? 0) - pts);
-        }
+  (question: ScoredQuestion, previousOptionId: string, newOptionId: string) => {
+    const current = useAuthStore.getState().heroScores as HeroScoreMap;
+    const pts = resolvePoints(question.part, question.pointOverride);
+    const prevOption = question.options.find(o => o.id === previousOptionId);
+    let working = { ...current };
+    if (prevOption) {
+      for (const hero of prevOption.heroes) {
+        working[hero] = Math.max(0, (working[hero] ?? 0) - pts);
       }
+    }
+    const newOption = question.options.find(o => o.id === newOptionId);
+    if (newOption) working = awardPoints(working, newOption.heroes, pts);
+    setHeroScores(working);
+  },
+  [setHeroScores],
+);
 
-      // Add new answer's heroes
-      const newOption = question.options.find(o => o.id === newOptionId);
-      if (newOption) {
-        working = awardPoints(working, newOption.heroes, pts);
-      }
 
-      setHeroScores(working);
-    },
-    [heroScores, setHeroScores],
-  );
-
-  // ── Bulk recording (submit entire screen at once) ─────────────────────────
-
-  /**
-   * Process all answers for a screen in one shot.
-   * Useful if you want to hold answers in local state and only
-   * commit to the store when the user presses "Submit".
-   *
-   * @example — end of PersonalityTestScreen
-   * submitScreen(part1Questions, localAnswers);
-   * navigation.navigate('DemographicProfile');
-   */
   const submitScreen = useCallback(
-    (questions: ScoredQuestion[], answers: Record<string, string>) => {
-      const updated = processAllAnswers(heroScores, questions, answers);
-      setHeroScores(updated);
-    },
-    [heroScores, setHeroScores],
-  );
+  (questions: ScoredQuestion[], answers: Record<string, string>) => {
+    const current = useAuthStore.getState().heroScores as HeroScoreMap;
+    const updated = processAllAnswers(current, questions, answers);
+    setHeroScores(updated);
+  },
+  [setHeroScores],
+);
 
   // ── Direct point award (for Demographic choices, bonuses, etc.) ──────────
 
@@ -117,12 +99,13 @@ export function useHeroScoring() {
    * awardHeroPoints(['jose_rizal', 'emilio_jacinto'], 1);
    */
   const awardHeroPoints = useCallback(
-    (heroes: HeroKey[], points: number) => {
-      const updated = awardPoints(heroScores, heroes, points);
-      setHeroScores(updated);
-    },
-    [heroScores, setHeroScores],
-  );
+  (heroes: HeroKey[], points: number) => {
+    const current = useAuthStore.getState().heroScores as HeroScoreMap;
+    const updated = awardPoints(current, heroes, points);
+    setHeroScores(updated);
+  },
+  [setHeroScores],
+);
 
   // ── Reset ─────────────────────────────────────────────────────────────────
 
@@ -157,12 +140,13 @@ export function useHeroScoring() {
    * and want to add them to the running total.
    */
   const mergeExternalScores = useCallback(
-    (external: HeroScoreMap) => {
-      const merged = mergeScores(heroScores, external);
-      setHeroScores(merged);
-    },
-    [heroScores, setHeroScores],
-  );
+  (external: HeroScoreMap) => {
+    const current = useAuthStore.getState().heroScores as HeroScoreMap;
+    const merged = mergeScores(current, external);
+    setHeroScores(merged);
+  },
+  [setHeroScores],
+);
 
   return {
     // State

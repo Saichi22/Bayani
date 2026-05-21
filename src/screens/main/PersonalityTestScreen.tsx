@@ -658,7 +658,11 @@ export default function PersonalityTestScreen({ navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   const headerFade = useRef(new Animated.Value(0)).current;
   const headerSlide = useRef(new Animated.Value(-20)).current;
-  const { submitScreen } = useHeroScoring();
+  const { submitScreen, resetScores } = useHeroScoring();
+
+useEffect(() => {
+  resetScores();
+}, []);
 
   useEffect(() => {
     Animated.parallel([

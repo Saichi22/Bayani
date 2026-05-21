@@ -707,9 +707,14 @@ export default function HeroResultScreen({ route, navigation }: Props) {
   // Match score as a percentage of the top hero's raw score vs total points.
   // If the primary hero grabbed 40 % of all points awarded, show 40 %.
   // Clamped to [0, 100].
-  const matchPct = primary && total > 0
-    ? Math.min(100, Math.round((primary.score / total) * 100 * 2.5))
-    : 0;
+  // After — percentage of questions where this hero was selected
+const TOTAL_QUESTIONS = 18; // your allQuestions.length
+const POINTS_PER_QUESTION = 1; // POINTS_PER_PART value
+const MAX_POSSIBLE = TOTAL_QUESTIONS * POINTS_PER_QUESTION;
+
+const matchPct = primary && primary.score > 0
+  ? Math.min(100, Math.round((primary.score / MAX_POSSIBLE) * 100))
+  : 0;
 
   // ── Animations ───────────────────────────────────────────────────────────
   const contentFade   = useRef(new Animated.Value(0)).current;
@@ -879,7 +884,7 @@ export default function HeroResultScreen({ route, navigation }: Props) {
                   key={r.hero}
                   heroKey={r.hero}
                   score={r.score}
-                  maxScore={primary?.score ?? 1}
+                  maxScore={MAX_POSSIBLE}
                 />
               ))}
             </View>

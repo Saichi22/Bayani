@@ -1,19 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// heroScoring.ts
-// Centralized hero scoring system for Bayani.
-// Contains:
-// - Types
-// - Constants
-// - Pure scoring logic
-// Store-agnostic and reusable anywhere.
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ─── HERO KEYS ───────────────────────────────────────────────────────────────
-
-/**
- * Every answer option maps to one or more heroes.
- * Add new heroes here as the app grows.
- */
 export type HeroKey =
   | 'jose_rizal'
   | 'andres_bonifacio'
@@ -215,6 +199,37 @@ export function rankHeroes(scores: HeroScoreMap): HeroResult[] {
       score: score ?? 0,
       rank: index,
     }));
+}
+
+/**
+ * Compute the maximum possible score for each hero —
+ * i.e. the number of distinct questions they appear in × points per question.
+ *
+ * This is the correct denominator for matchPct, because a hero
+ * that only appears in 6 questions can never score more than 6 points.
+ */
+export function computeHeroMaxScores(
+  questions: ScoredQuestion[],
+): Partial<Record<HeroKey, number>> {
+  // Build a set of question IDs per hero first, to avoid double-counting
+  // heroes that appear in multiple options of the same question.
+  const heroQuestionSets: Partial<Record<HeroKey, Set<string>>> = {};
+
+  for (const question of questions) {
+    for (const option of question.options) {
+      for (const hero of option.heroes) {
+        if (!heroQuestionSets[hero]) heroQuestionSets[hero] = new Set();
+        heroQuestionSets[hero]!.add(question.id);
+      }
+    }
+  }
+
+  const result: Partial<Record<HeroKey, number>> = {};
+  for (const [hero, qSet] of Object.entries(heroQuestionSets)) {
+    const appearances = qSet.size;
+    result[hero as HeroKey] = appearances * POINTS_PER_PART['PART_1'];
+  }
+  return result;
 }
 
 /**

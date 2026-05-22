@@ -1,4 +1,3 @@
-// filepath: src/screens/main/HeroResultScreen.tsx
 import React, { useRef, useEffect } from 'react';
 import {
   View,
@@ -20,6 +19,7 @@ import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
 import { useHeroScoring } from '../../hooks/useHeroScoring';
 import { HeroKey } from '../../store/heroScoring';
+import { allQuestions } from '../../data/questions';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'HeroResult'>;
 
@@ -47,10 +47,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Your personality aligns with the national hero of the Philippines. Like Rizal, you value education, intellect, and peaceful reform. You believe that the pen is mightier than the sword.',
     traits: [
-      { iconName: 'book', label: 'Makatalino', sublabel: 'Intellectual' },
-      { iconName: 'pencil', label: 'Malikhaing', sublabel: 'Creative' },
-      { iconName: 'heart', label: 'Makatao', sublabel: 'Humanist' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
+      { iconName: 'book',      label: 'Makatalino', sublabel: 'Intellectual' },
+      { iconName: 'pencil',    label: 'Malikhaing', sublabel: 'Creative'     },
+      { iconName: 'heart',     label: 'Makatao',    sublabel: 'Humanist'     },
+      { iconName: 'globe',     label: 'Makabayan',  sublabel: 'Nationalist'  },
     ],
   },
   andres_bonifacio: {
@@ -61,10 +61,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You share the fire of the Supremo. Like Bonifacio, you champion the oppressed, act with urgency, and believe that freedom is worth any sacrifice.',
     traits: [
-      { iconName: 'fist', label: 'Matapang', sublabel: 'Courageous' },
-      { iconName: 'users', label: 'Maka-masa', sublabel: 'Pro-people' },
-      { iconName: 'bolt', label: 'Determinado', sublabel: 'Determined' },
-      { iconName: 'heart', label: 'Mapagmahal', sublabel: 'Passionate' },
+      { iconName: 'fist',      label: 'Matapang',    sublabel: 'Courageous' },
+      { iconName: 'users',     label: 'Maka-masa',   sublabel: 'Pro-people' },
+      { iconName: 'bolt',      label: 'Determinado', sublabel: 'Determined' },
+      { iconName: 'heart',     label: 'Mapagmahal',  sublabel: 'Passionate' },
     ],
   },
   gen_antonio_luna: {
@@ -76,9 +76,9 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
       'You carry the intensity and brilliance of General Luna. You hold others — and yourself — to the highest standards, and you refuse to compromise on what is right.',
     traits: [
       { iconName: 'shield', label: 'Disiplinado', sublabel: 'Disciplined' },
-      { iconName: 'bolt', label: 'Mabilis', sublabel: 'Swift' },
-      { iconName: 'star', label: 'Mahuhusay', sublabel: 'Excellent' },
-      { iconName: 'eye', label: 'Mapanuri', sublabel: 'Analytical' },
+      { iconName: 'bolt',   label: 'Mabilis',     sublabel: 'Swift'       },
+      { iconName: 'star',   label: 'Mahuhusay',   sublabel: 'Excellent'   },
+      { iconName: 'eye',    label: 'Mapanuri',    sublabel: 'Analytical'  },
     ],
   },
   apolinario_mabini: {
@@ -89,10 +89,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Mabini, you are the quiet strategist whose mind shapes events. You think before you act and your principles are unshakeable even under pressure.',
     traits: [
-      { iconName: 'lightbulb-o', label: 'Matalino', sublabel: 'Brilliant' },
-      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
+      { iconName: 'lightbulb-o',    label: 'Matalino',      sublabel: 'Brilliant'  },
+      { iconName: 'balance-scale',  label: 'Makatarungan',  sublabel: 'Just'       },
+      { iconName: 'pencil',         label: 'Manunulat',     sublabel: 'Writer'     },
+      { iconName: 'anchor',         label: 'Matatag',       sublabel: 'Steadfast'  },
     ],
   },
   marcelo_del_pilar: {
@@ -103,10 +103,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You wield words as weapons for truth. Like del Pilar, you challenge authority through sharp wit and refuse to let injustice go unaddressed.',
     traits: [
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'bullhorn', label: 'Mapanghamon', sublabel: 'Bold' },
-      { iconName: 'search', label: 'Kritikal', sublabel: 'Critical' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'pencil',   label: 'Manunulat',   sublabel: 'Writer'   },
+      { iconName: 'bullhorn', label: 'Mapanghamon', sublabel: 'Bold'     },
+      { iconName: 'search',   label: 'Kritikal',    sublabel: 'Critical' },
+      { iconName: 'globe',    label: 'Makabayan',   sublabel: 'Patriot'  },
     ],
   },
   graciano_lopez_jaena: {
@@ -117,10 +117,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Your voice carries the power of Lopez Jaena. You speak truth to power and inspire others through your eloquence and passion for justice.',
     traits: [
-      { iconName: 'microphone', label: 'Marunong magsalita', sublabel: 'Eloquent' },
-      { iconName: 'fire', label: 'Maningas', sublabel: 'Passionate' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Caring' },
+      { iconName: 'microphone', label: 'Marunong magsalita', sublabel: 'Eloquent'  },
+      { iconName: 'fire',       label: 'Maningas',           sublabel: 'Passionate' },
+      { iconName: 'pencil',     label: 'Manunulat',          sublabel: 'Writer'    },
+      { iconName: 'heart',      label: 'Mapagmalasakit',     sublabel: 'Caring'    },
     ],
   },
   emilio_jacinto: {
@@ -131,10 +131,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You share the rare combination of intellect and revolutionary fire that defined Emilio Jacinto. Your idealism drives you to fight for genuine change.',
     traits: [
-      { iconName: 'book', label: 'Edukado', sublabel: 'Educated' },
-      { iconName: 'fire', label: 'Rebolusyonaryo', sublabel: 'Revolutionary' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'star', label: 'Perpeksyonista', sublabel: 'Idealist' },
+      { iconName: 'book',   label: 'Edukado',        sublabel: 'Educated'     },
+      { iconName: 'fire',   label: 'Rebolusyonaryo', sublabel: 'Revolutionary' },
+      { iconName: 'pencil', label: 'Manunulat',      sublabel: 'Writer'       },
+      { iconName: 'star',   label: 'Perpeksyonista', sublabel: 'Idealist'     },
     ],
   },
   gen_gregorio_del_pilar: {
@@ -145,10 +145,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Young, brave, and selfless — like the Boy General. You lead from the front and are willing to give everything for those who depend on you.',
     traits: [
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'users', label: 'Tapat', sublabel: 'Loyal' },
-      { iconName: 'star', label: 'Sakripisyo', sublabel: 'Sacrificial' },
-      { iconName: 'heart', label: 'Mapagmahal', sublabel: 'Devoted' },
+      { iconName: 'shield', label: 'Matapang',   sublabel: 'Brave'      },
+      { iconName: 'users',  label: 'Tapat',      sublabel: 'Loyal'      },
+      { iconName: 'star',   label: 'Sakripisyo', sublabel: 'Sacrificial' },
+      { iconName: 'heart',  label: 'Mapagmahal', sublabel: 'Devoted'    },
     ],
   },
   gen_emilio_aguinaldo: {
@@ -159,10 +159,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Aguinaldo, you are a pragmatic leader who navigates complex situations with calculated resolve, always keeping the bigger picture in mind.',
     traits: [
-      { iconName: 'flag', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'cogs', label: 'Estratehista', sublabel: 'Strategist' },
-      { iconName: 'shield', label: 'Matatag', sublabel: 'Resilient' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
+      { iconName: 'flag',   label: 'Lider',       sublabel: 'Leader'     },
+      { iconName: 'cogs',   label: 'Estratehista', sublabel: 'Strategist' },
+      { iconName: 'shield', label: 'Matatag',      sublabel: 'Resilient'  },
+      { iconName: 'globe',  label: 'Makabayan',    sublabel: 'Nationalist' },
     ],
   },
   gabriela_silang: {
@@ -173,10 +173,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You carry the indomitable spirit of Gabriela Silang. You rise even in the face of loss and fight for your people with unwavering courage.',
     traits: [
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Courageous' },
-      { iconName: 'heart', label: 'Matatag', sublabel: 'Resilient' },
-      { iconName: 'users', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'star', label: 'Inspirasyon', sublabel: 'Inspiring' },
+      { iconName: 'shield', label: 'Matapang',   sublabel: 'Courageous' },
+      { iconName: 'heart',  label: 'Matatag',    sublabel: 'Resilient'  },
+      { iconName: 'users',  label: 'Lider',      sublabel: 'Leader'     },
+      { iconName: 'star',   label: 'Inspirasyon', sublabel: 'Inspiring' },
     ],
   },
   diego_silang: {
@@ -187,10 +187,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Diego Silang, you are a bold rebel who challenges unjust systems and rallies others to demand what is rightfully theirs.',
     traits: [
-      { iconName: 'bolt', label: 'Matapang', sublabel: 'Daring' },
-      { iconName: 'users', label: 'Tagasuporta ng masa', sublabel: 'Champion' },
-      { iconName: 'fire', label: 'Determinado', sublabel: 'Determined' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'bolt',   label: 'Matapang',            sublabel: 'Daring'    },
+      { iconName: 'users',  label: 'Tagasuporta ng masa', sublabel: 'Champion'  },
+      { iconName: 'fire',   label: 'Determinado',         sublabel: 'Determined' },
+      { iconName: 'globe',  label: 'Makabayan',           sublabel: 'Patriot'   },
     ],
   },
   melchora_aquino: {
@@ -201,10 +201,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Tandang Sora, you are the quiet backbone of every struggle — nurturing, steadfast, and selflessly devoted to those you protect.',
     traits: [
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Caring' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
-      { iconName: 'users', label: 'Mapagbigay', sublabel: 'Generous' },
-      { iconName: 'shield', label: 'Matibay', sublabel: 'Resilient' },
+      { iconName: 'heart',  label: 'Mapagmalasakit', sublabel: 'Caring'     },
+      { iconName: 'anchor', label: 'Matatag',        sublabel: 'Steadfast'  },
+      { iconName: 'users',  label: 'Mapagbigay',     sublabel: 'Generous'   },
+      { iconName: 'shield', label: 'Matibay',        sublabel: 'Resilient'  },
     ],
   },
   gregoria_de_jesus: {
@@ -215,10 +215,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You embody the quiet fire of Gregoria de Jesus — fiercely loyal, deeply principled, and willing to endure anything for the cause you love.',
     traits: [
-      { iconName: 'heart', label: 'Tapat na pagmamahal', sublabel: 'Devoted' },
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'star', label: 'Inspirasyon', sublabel: 'Inspiring' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
+      { iconName: 'heart',  label: 'Tapat na pagmamahal', sublabel: 'Devoted'   },
+      { iconName: 'shield', label: 'Matapang',            sublabel: 'Brave'     },
+      { iconName: 'star',   label: 'Inspirasyon',         sublabel: 'Inspiring' },
+      { iconName: 'anchor', label: 'Matatag',             sublabel: 'Steadfast' },
     ],
   },
   lapu_lapu: {
@@ -229,10 +229,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You stand firm like Lapu-Lapu — unwilling to surrender your freedom or identity to any force, no matter how powerful.',
     traits: [
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Fearless' },
-      { iconName: 'anchor', label: 'Hindi sumusuko', sublabel: 'Unyielding' },
-      { iconName: 'flag', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'shield', label: 'Matapang',        sublabel: 'Fearless'   },
+      { iconName: 'anchor', label: 'Hindi sumusuko',  sublabel: 'Unyielding' },
+      { iconName: 'flag',   label: 'Lider',           sublabel: 'Leader'     },
+      { iconName: 'heart',  label: 'Makabayan',       sublabel: 'Patriot'    },
     ],
   },
   juan_luna: {
@@ -243,10 +243,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Juan Luna, your greatest strength is your art and your passion. You express your love of country through your creativity and refuse to be silenced.',
     traits: [
-      { iconName: 'paint-brush', label: 'Malikhaing', sublabel: 'Creative' },
-      { iconName: 'fire', label: 'Maningas', sublabel: 'Passionate' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Patriot' },
-      { iconName: 'star', label: 'Mahuhusay', sublabel: 'Excellent' },
+      { iconName: 'paint-brush', label: 'Malikhaing', sublabel: 'Creative'  },
+      { iconName: 'fire',        label: 'Maningas',   sublabel: 'Passionate' },
+      { iconName: 'globe',       label: 'Makabayan',  sublabel: 'Patriot'   },
+      { iconName: 'star',        label: 'Mahuhusay',  sublabel: 'Excellent' },
     ],
   },
   epifanio_de_los_santos: {
@@ -257,10 +257,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like E. de los Santos, you are the keeper of memory — you believe that knowing the past is essential to shaping the future.',
     traits: [
-      { iconName: 'book', label: 'Iskolar', sublabel: 'Scholar' },
-      { iconName: 'search', label: 'Mapanuri', sublabel: 'Research-minded' },
-      { iconName: 'archive', label: 'Tagapagtago', sublabel: 'Preserver' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
+      { iconName: 'book',    label: 'Iskolar',     sublabel: 'Scholar'         },
+      { iconName: 'search',  label: 'Mapanuri',    sublabel: 'Research-minded' },
+      { iconName: 'archive', label: 'Tagapagtago', sublabel: 'Preserver'       },
+      { iconName: 'globe',   label: 'Makabayan',   sublabel: 'Nationalist'     },
     ],
   },
   mariano_ponce: {
@@ -271,10 +271,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Mariano Ponce, you work quietly behind the scenes — building alliances, gathering resources, and ensuring the mission succeeds through careful diplomacy.',
     traits: [
-      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
-      { iconName: 'cogs', label: 'Estratehista', sublabel: 'Strategic' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
+      { iconName: 'handshake-o', label: 'Diplomatiko',  sublabel: 'Diplomatic' },
+      { iconName: 'globe',       label: 'Makabayan',    sublabel: 'Nationalist' },
+      { iconName: 'cogs',        label: 'Estratehista', sublabel: 'Strategic'  },
+      { iconName: 'pencil',      label: 'Manunulat',    sublabel: 'Writer'     },
     ],
   },
   felipe_agoncillo: {
@@ -285,10 +285,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You carry the precision and patience of Agoncillo. You believe in winning battles through negotiation, persuasion, and well-timed advocacy.',
     traits: [
-      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic' },
-      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
-      { iconName: 'cogs', label: 'Matalino', sublabel: 'Clever' },
+      { iconName: 'handshake-o',   label: 'Diplomatiko',   sublabel: 'Diplomatic' },
+      { iconName: 'balance-scale', label: 'Makatarungan',  sublabel: 'Just'       },
+      { iconName: 'globe',         label: 'Makabayan',     sublabel: 'Nationalist' },
+      { iconName: 'cogs',          label: 'Matalino',      sublabel: 'Clever'     },
     ],
   },
   rafael_palma: {
@@ -299,10 +299,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Rafael Palma, you believe that education and integrity are the foundations of a just society. You lead by example and uplift those around you.',
     traits: [
-      { iconName: 'graduation-cap', label: 'Edukador', sublabel: 'Educator' },
-      { iconName: 'balance-scale', label: 'Matapat', sublabel: 'Principled' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'users', label: 'Lider', sublabel: 'Leader' },
+      { iconName: 'graduation-cap', label: 'Edukador',  sublabel: 'Educator'   },
+      { iconName: 'balance-scale',  label: 'Matapat',   sublabel: 'Principled' },
+      { iconName: 'pencil',         label: 'Manunulat', sublabel: 'Writer'     },
+      { iconName: 'users',          label: 'Lider',     sublabel: 'Leader'     },
     ],
   },
   panday_pira: {
@@ -313,10 +313,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Panday Pira, you are the craftsman whose work changes the course of history — precise, dedicated, and proud of your skill.',
     traits: [
-      { iconName: 'wrench', label: 'Bihasang manggagawa', sublabel: 'Craftsman' },
-      { iconName: 'cogs', label: 'Malikhain', sublabel: 'Innovative' },
-      { iconName: 'star', label: 'Mahuhusay', sublabel: 'Expert' },
-      { iconName: 'flag', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'wrench', label: 'Bihasang manggagawa', sublabel: 'Craftsman'  },
+      { iconName: 'cogs',   label: 'Malikhain',           sublabel: 'Innovative' },
+      { iconName: 'star',   label: 'Mahuhusay',           sublabel: 'Expert'     },
+      { iconName: 'flag',   label: 'Makabayan',           sublabel: 'Patriot'    },
     ],
   },
   leona_florentino: {
@@ -327,10 +327,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Leona Florentino, you use the power of language and art to preserve what is beautiful and true about your culture.',
     traits: [
-      { iconName: 'pencil', label: 'Makata', sublabel: 'Poet' },
-      { iconName: 'heart', label: 'Sensitibo', sublabel: 'Sensitive' },
-      { iconName: 'book', label: 'Mapag-aralan', sublabel: 'Learned' },
-      { iconName: 'star', label: 'Natatangi', sublabel: 'Unique' },
+      { iconName: 'pencil', label: 'Makata',       sublabel: 'Poet'      },
+      { iconName: 'heart',  label: 'Sensitibo',    sublabel: 'Sensitive' },
+      { iconName: 'book',   label: 'Mapag-aralan', sublabel: 'Learned'   },
+      { iconName: 'star',   label: 'Natatangi',    sublabel: 'Unique'    },
     ],
   },
   francisco_baltazar: {
@@ -341,10 +341,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You carry the soul of Balagtas — your artistry speaks of truth, love, and the enduring beauty of the Filipino spirit.',
     traits: [
-      { iconName: 'pencil', label: 'Makata', sublabel: 'Poet' },
-      { iconName: 'heart', label: 'Mapagmahal', sublabel: 'Loving' },
-      { iconName: 'book', label: 'Edukado', sublabel: 'Educated' },
-      { iconName: 'star', label: 'Malikhaing', sublabel: 'Creative' },
+      { iconName: 'pencil', label: 'Makata',      sublabel: 'Poet'      },
+      { iconName: 'heart',  label: 'Mapagmahal',  sublabel: 'Loving'    },
+      { iconName: 'book',   label: 'Edukado',     sublabel: 'Educated'  },
+      { iconName: 'star',   label: 'Malikhaing',  sublabel: 'Creative'  },
     ],
   },
   trinidad_tecson: {
@@ -355,10 +355,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Tecson, you are fierce and tireless in protecting those you love. You stand in the front lines so others may live.',
     traits: [
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Caring' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
-      { iconName: 'users', label: 'Tagapagtanggol', sublabel: 'Protector' },
+      { iconName: 'shield', label: 'Matapang',       sublabel: 'Brave'      },
+      { iconName: 'heart',  label: 'Mapagmalasakit', sublabel: 'Caring'     },
+      { iconName: 'anchor', label: 'Matatag',        sublabel: 'Steadfast'  },
+      { iconName: 'users',  label: 'Tagapagtanggol', sublabel: 'Protector'  },
     ],
   },
   artemio_ricarte: {
@@ -369,10 +369,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Ricarte, your loyalty to your principles is absolute. You refuse to compromise your convictions, even at great personal cost.',
     traits: [
-      { iconName: 'shield', label: 'Matibay ang loob', sublabel: 'Resolute' },
+      { iconName: 'shield', label: 'Matibay ang loob', sublabel: 'Resolute'       },
       { iconName: 'anchor', label: 'Hindi nagbibigay', sublabel: 'Uncompromising' },
-      { iconName: 'star', label: 'Tapat', sublabel: 'Loyal' },
-      { iconName: 'bolt', label: 'Determinado', sublabel: 'Determined' },
+      { iconName: 'star',   label: 'Tapat',            sublabel: 'Loyal'          },
+      { iconName: 'bolt',   label: 'Determinado',      sublabel: 'Determined'     },
     ],
   },
   isabelo_de_los_reyes: {
@@ -383,10 +383,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Don Belong, you believe in the power of workers, culture, and truth to reshape society from the ground up.',
     traits: [
-      { iconName: 'book', label: 'Mananalaysay', sublabel: 'Historian' },
-      { iconName: 'users', label: 'Pro-manggagawa', sublabel: 'Labor advocate' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
+      { iconName: 'book',   label: 'Mananalaysay',    sublabel: 'Historian'      },
+      { iconName: 'users',  label: 'Pro-manggagawa',  sublabel: 'Labor advocate' },
+      { iconName: 'pencil', label: 'Manunulat',       sublabel: 'Writer'         },
+      { iconName: 'globe',  label: 'Makabayan',       sublabel: 'Nationalist'    },
     ],
   },
   jose_burgos: {
@@ -397,10 +397,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'You speak the truth even when silence would be safer. Like Burgos, you believe that clergy and citizens alike must stand against injustice.',
     traits: [
-      { iconName: 'bullhorn', label: 'Matapang', sublabel: 'Bold' },
-      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just' },
-      { iconName: 'heart', label: 'Maka-Diyos', sublabel: 'Faithful' },
-      { iconName: 'star', label: 'Sakripisyo', sublabel: 'Sacrificial' },
+      { iconName: 'bullhorn',      label: 'Matapang',     sublabel: 'Bold'        },
+      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just'        },
+      { iconName: 'heart',         label: 'Maka-Diyos',  sublabel: 'Faithful'    },
+      { iconName: 'star',          label: 'Sakripisyo',  sublabel: 'Sacrificial' },
     ],
   },
   mariano_gomez: {
@@ -411,10 +411,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Fr. Gomez, your quiet dedication and moral courage inspire generations long after you are gone.',
     traits: [
-      { iconName: 'heart', label: 'Maka-Diyos', sublabel: 'Faithful' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
-      { iconName: 'users', label: 'Mapaglingkod', sublabel: 'Servant' },
-      { iconName: 'star', label: 'Sakripisyo', sublabel: 'Sacrificial' },
+      { iconName: 'heart',  label: 'Maka-Diyos',   sublabel: 'Faithful'    },
+      { iconName: 'anchor', label: 'Matatag',       sublabel: 'Steadfast'   },
+      { iconName: 'users',  label: 'Mapaglingkod',  sublabel: 'Servant'     },
+      { iconName: 'star',   label: 'Sakripisyo',   sublabel: 'Sacrificial' },
     ],
   },
   jacinto_zamora: {
@@ -425,10 +425,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Fr. Zamora, you believe that justice is sacred and worth defending at any cost, even when the odds are overwhelmingly against you.',
     traits: [
-      { iconName: 'heart', label: 'Maka-Diyos', sublabel: 'Faithful' },
-      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just' },
-      { iconName: 'shield', label: 'Matibay', sublabel: 'Resilient' },
-      { iconName: 'star', label: 'Sakripisyo', sublabel: 'Sacrificial' },
+      { iconName: 'heart',         label: 'Maka-Diyos',   sublabel: 'Faithful'    },
+      { iconName: 'balance-scale', label: 'Makatarungan', sublabel: 'Just'        },
+      { iconName: 'shield',        label: 'Matibay',      sublabel: 'Resilient'   },
+      { iconName: 'star',          label: 'Sakripisyo',  sublabel: 'Sacrificial' },
     ],
   },
   rajah_sulayman: {
@@ -439,10 +439,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Sulayman, you refuse to bow to foreign power. You defend your home and your people with the full force of your conviction.',
     traits: [
-      { iconName: 'flag', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Fearless' },
-      { iconName: 'anchor', label: 'Hindi sumusuko', sublabel: 'Unyielding' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'flag',   label: 'Lider',          sublabel: 'Leader'     },
+      { iconName: 'shield', label: 'Matapang',        sublabel: 'Fearless'   },
+      { iconName: 'anchor', label: 'Hindi sumusuko',  sublabel: 'Unyielding' },
+      { iconName: 'heart',  label: 'Makabayan',       sublabel: 'Patriot'    },
     ],
   },
   lakandula: {
@@ -453,10 +453,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Lakandula, you seek peace through wisdom — but you will act decisively when those you lead are threatened.',
     traits: [
-      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic' },
-      { iconName: 'users', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'balance-scale', label: 'Matalino', sublabel: 'Wise' },
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Caring' },
+      { iconName: 'handshake-o',   label: 'Diplomatiko',   sublabel: 'Diplomatic' },
+      { iconName: 'users',         label: 'Lider',         sublabel: 'Leader'     },
+      { iconName: 'balance-scale', label: 'Matalino',      sublabel: 'Wise'       },
+      { iconName: 'heart',         label: 'Mapagmalasakit', sublabel: 'Caring'    },
     ],
   },
   leonor_rivera: {
@@ -467,10 +467,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Leonor Rivera, your love and loyalty are your strength. You endure quietly, but your devotion fuels those who fight beside you.',
     traits: [
-      { iconName: 'heart', label: 'Tapat na pagmamahal', sublabel: 'Devoted' },
-      { iconName: 'anchor', label: 'Matatag', sublabel: 'Steadfast' },
-      { iconName: 'star', label: 'Mapagbigay', sublabel: 'Selfless' },
-      { iconName: 'users', label: 'Mapagalalay', sublabel: 'Supportive' },
+      { iconName: 'heart',  label: 'Tapat na pagmamahal', sublabel: 'Devoted'    },
+      { iconName: 'anchor', label: 'Matatag',             sublabel: 'Steadfast'  },
+      { iconName: 'star',   label: 'Mapagbigay',          sublabel: 'Selfless'   },
+      { iconName: 'users',  label: 'Mapagalalay',         sublabel: 'Supportive' },
     ],
   },
   marcela_agoncillo: {
@@ -481,10 +481,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Marcela Agoncillo, you shape history through craft, love, and the quiet power of what you build with your own hands.',
     traits: [
-      { iconName: 'heart', label: 'Malikhaing', sublabel: 'Creative' },
-      { iconName: 'star', label: 'Mapagbigay', sublabel: 'Selfless' },
-      { iconName: 'users', label: 'Maaasahan', sublabel: 'Dependable' },
-      { iconName: 'flag', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'heart', label: 'Malikhaing', sublabel: 'Creative'     },
+      { iconName: 'star',  label: 'Mapagbigay', sublabel: 'Selfless'     },
+      { iconName: 'users', label: 'Maaasahan',  sublabel: 'Dependable'   },
+      { iconName: 'flag',  label: 'Makabayan',  sublabel: 'Patriot'      },
     ],
   },
   galicano_apacible: {
@@ -495,10 +495,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Apacible, you work steadily behind the scenes — building networks, writing, and advocating until the right moment arrives.',
     traits: [
-      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'cogs', label: 'Estratehista', sublabel: 'Strategic' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'handshake-o', label: 'Diplomatiko',  sublabel: 'Diplomatic' },
+      { iconName: 'pencil',      label: 'Manunulat',    sublabel: 'Writer'     },
+      { iconName: 'cogs',        label: 'Estratehista', sublabel: 'Strategic'  },
+      { iconName: 'globe',       label: 'Makabayan',    sublabel: 'Patriot'    },
     ],
   },
   jose_ma_panganiban: {
@@ -509,10 +509,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Panganiban, you celebrate your language and culture as acts of patriotism, expressing your love of country through your art.',
     traits: [
-      { iconName: 'pencil', label: 'Makata', sublabel: 'Poet' },
-      { iconName: 'book', label: 'Edukado', sublabel: 'Learned' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
-      { iconName: 'star', label: 'Malikhaing', sublabel: 'Creative' },
+      { iconName: 'pencil', label: 'Makata',    sublabel: 'Poet'      },
+      { iconName: 'book',   label: 'Edukado',   sublabel: 'Learned'   },
+      { iconName: 'heart',  label: 'Makabayan', sublabel: 'Patriot'   },
+      { iconName: 'star',   label: 'Malikhaing', sublabel: 'Creative' },
     ],
   },
   pedro_paterno: {
@@ -523,10 +523,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Paterno, you bridge worlds — using your intellect and connections to create opportunities for your people on the world stage.',
     traits: [
-      { iconName: 'book', label: 'Iskolar', sublabel: 'Scholar' },
-      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic' },
-      { iconName: 'pencil', label: 'Manunulat', sublabel: 'Writer' },
-      { iconName: 'globe', label: 'Makabayan', sublabel: 'Nationalist' },
+      { iconName: 'book',        label: 'Iskolar',     sublabel: 'Scholar'     },
+      { iconName: 'handshake-o', label: 'Diplomatiko', sublabel: 'Diplomatic'  },
+      { iconName: 'pencil',      label: 'Manunulat',   sublabel: 'Writer'      },
+      { iconName: 'globe',       label: 'Makabayan',   sublabel: 'Nationalist' },
     ],
   },
   marina_dizon: {
@@ -537,10 +537,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Marina Dizon, you work quietly but with total commitment — keeping the network alive and carrying the mission forward when others cannot.',
     traits: [
-      { iconName: 'users', label: 'Tapat', sublabel: 'Loyal' },
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Caring' },
-      { iconName: 'star', label: 'Dedikado', sublabel: 'Dedicated' },
+      { iconName: 'users',  label: 'Tapat',         sublabel: 'Loyal'      },
+      { iconName: 'shield', label: 'Matapang',      sublabel: 'Brave'      },
+      { iconName: 'heart',  label: 'Mapagmalasakit', sublabel: 'Caring'    },
+      { iconName: 'star',   label: 'Dedikado',      sublabel: 'Dedicated'  },
     ],
   },
   agueda_esteban: {
@@ -551,10 +551,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Agueda Esteban, you are moved by the suffering of others and take action where most would look away.',
     traits: [
-      { iconName: 'heart', label: 'Mapagmalasakit', sublabel: 'Compassionate' },
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'users', label: 'Tagapagtanggol', sublabel: 'Protector' },
-      { iconName: 'star', label: 'Dedikado', sublabel: 'Dedicated' },
+      { iconName: 'heart',  label: 'Mapagmalasakit', sublabel: 'Compassionate' },
+      { iconName: 'shield', label: 'Matapang',       sublabel: 'Brave'         },
+      { iconName: 'users',  label: 'Tagapagtanggol', sublabel: 'Protector'     },
+      { iconName: 'star',   label: 'Dedikado',       sublabel: 'Dedicated'     },
     ],
   },
   francisco_dagohoy: {
@@ -565,10 +565,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Dagohoy, you are relentless. You wage the long fight — not for glory but for the simple right to live freely on your own land.',
     traits: [
-      { iconName: 'anchor', label: 'Hindi sumusuko', sublabel: 'Unyielding' },
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-      { iconName: 'fire', label: 'Determinado', sublabel: 'Determined' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'anchor', label: 'Hindi sumusuko', sublabel: 'Unyielding'  },
+      { iconName: 'shield', label: 'Matapang',       sublabel: 'Brave'       },
+      { iconName: 'fire',   label: 'Determinado',    sublabel: 'Determined'  },
+      { iconName: 'heart',  label: 'Makabayan',      sublabel: 'Patriot'     },
     ],
   },
   teresa_magbanua: {
@@ -579,10 +579,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Magbanua, you shatter every expectation. You lead fearlessly where others hesitate and fight not for recognition but for what is right.',
     traits: [
-      { iconName: 'shield', label: 'Matapang', sublabel: 'Fearless' },
-      { iconName: 'users', label: 'Lider', sublabel: 'Leader' },
-      { iconName: 'star', label: 'Inspirasyon', sublabel: 'Inspiring' },
-      { iconName: 'bolt', label: 'Determinado', sublabel: 'Determined' },
+      { iconName: 'shield', label: 'Matapang',   sublabel: 'Fearless'   },
+      { iconName: 'users',  label: 'Lider',      sublabel: 'Leader'     },
+      { iconName: 'star',   label: 'Inspirasyon', sublabel: 'Inspiring' },
+      { iconName: 'bolt',   label: 'Determinado', sublabel: 'Determined' },
     ],
   },
   fernando_guerrero: {
@@ -593,10 +593,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Guerrero, your pen is your protest. You celebrate the Filipino through language and art, making beauty itself an act of resistance.',
     traits: [
-      { iconName: 'pencil', label: 'Makata', sublabel: 'Poet' },
-      { iconName: 'book', label: 'Peryodista', sublabel: 'Journalist' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
-      { iconName: 'star', label: 'Malikhaing', sublabel: 'Creative' },
+      { iconName: 'pencil', label: 'Makata',     sublabel: 'Poet'       },
+      { iconName: 'book',   label: 'Peryodista', sublabel: 'Journalist' },
+      { iconName: 'heart',  label: 'Makabayan',  sublabel: 'Patriot'    },
+      { iconName: 'star',   label: 'Malikhaing', sublabel: 'Creative'   },
     ],
   },
   jose_palma: {
@@ -607,10 +607,10 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Jose Palma, you give your country a voice — your words become the anthem that binds a people together.',
     traits: [
-      { iconName: 'pencil', label: 'Makata', sublabel: 'Poet' },
-      { iconName: 'music', label: 'Malikhaing', sublabel: 'Artistic' },
-      { iconName: 'heart', label: 'Makabayan', sublabel: 'Patriot' },
-      { iconName: 'star', label: 'Inspirasyon', sublabel: 'Inspiring' },
+      { iconName: 'pencil', label: 'Makata',     sublabel: 'Poet'      },
+      { iconName: 'music',  label: 'Malikhaing', sublabel: 'Artistic'  },
+      { iconName: 'heart',  label: 'Makabayan',  sublabel: 'Patriot'   },
+      { iconName: 'star',   label: 'Inspirasyon', sublabel: 'Inspiring' },
     ],
   },
   julian_felipe: {
@@ -621,15 +621,15 @@ const HERO_CATALOGUE: Record<HeroKey, HeroMeta> = {
     description:
       'Like Julian Felipe, you channel your deepest feelings into something that outlasts you — a gift to every Filipino who comes after.',
     traits: [
-      { iconName: 'music', label: 'Musikero', sublabel: 'Musician' },
-      { iconName: 'heart', label: 'Malalim na damdamin', sublabel: 'Soulful' },
-      { iconName: 'star', label: 'Malikhaing', sublabel: 'Creative' },
-      { iconName: 'flag', label: 'Makabayan', sublabel: 'Patriot' },
+      { iconName: 'music',  label: 'Musikero',            sublabel: 'Musician' },
+      { iconName: 'heart',  label: 'Malalim na damdamin', sublabel: 'Soulful'  },
+      { iconName: 'star',   label: 'Malikhaing',          sublabel: 'Creative' },
+      { iconName: 'flag',   label: 'Makabayan',           sublabel: 'Patriot'  },
     ],
   },
 };
 
-// ── Fallback hero data if somehow primaryHero is missing ─────────────────────
+// ── Fallback hero data if somehow no match ────────────────────────────────────
 const FALLBACK_HERO: HeroMeta = {
   name: 'Bayani ng Pilipinas',
   tagline: 'Mandirigma · Makata · Bayani',
@@ -638,10 +638,10 @@ const FALLBACK_HERO: HeroMeta = {
   description:
     'Your story is still being written. Every question you answered reflects a part of the Filipino spirit — brave, creative, and devoted to truth.',
   traits: [
-    { iconName: 'star', label: 'Makabayan', sublabel: 'Nationalist' },
-    { iconName: 'heart', label: 'Mapagmahal', sublabel: 'Loving' },
-    { iconName: 'shield', label: 'Matapang', sublabel: 'Brave' },
-    { iconName: 'book', label: 'Matalino', sublabel: 'Intelligent' },
+    { iconName: 'star',   label: 'Makabayan', sublabel: 'Nationalist' },
+    { iconName: 'heart',  label: 'Mapagmahal', sublabel: 'Loving'    },
+    { iconName: 'shield', label: 'Matapang',   sublabel: 'Brave'     },
+    { iconName: 'book',   label: 'Matalino',   sublabel: 'Intelligent' },
   ],
 };
 
@@ -673,8 +673,9 @@ function RunnerUpBadge({
   score: number;
   maxScore: number;
 }) {
-  const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  const pct  = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
   const meta = HERO_CATALOGUE[heroKey];
+
   return (
     <View style={styles.runnerUpBadge}>
       <View style={styles.runnerUpTag}>
@@ -693,29 +694,27 @@ function RunnerUpBadge({
 
 // ── Screen ────────────────────────────────────────────────────────────────────
 export default function HeroResultScreen({ route, navigation }: Props) {
-  // Real AI-generated image URL passed from CameraScreen via navigation params
+  // Real AI-generated image URL passed from CameraScreen via navigation params.
   const imageUrl = route.params?.imageUrl ?? null;
 
-  // ── Pull live scoring data ────────────────────────────────────────────────
-  const { primaryHero, topHeroes, total, resetScores } = useHeroScoring();
+  const { topHeroes, total, resetScores, heroMaxScores } = useHeroScoring();
 
-  const top3       = topHeroes(3);
-  const primary    = top3[0] ?? null;
-  const runners    = top3.slice(1);                           // positions 2 & 3
-  const heroMeta   = primary ? (HERO_CATALOGUE[primary.hero] ?? FALLBACK_HERO) : FALLBACK_HERO;
+  const MATCH_THRESHOLD = 75;
+  const maxScoreMap     = heroMaxScores(allQuestions);
 
-  // Match score as a percentage of the top hero's raw score vs total points.
-  // If the primary hero grabbed 40 % of all points awarded, show 40 %.
-  // Clamped to [0, 100].
-  // After — percentage of questions where this hero was selected
-const TOTAL_QUESTIONS = 18; // your allQuestions.length
-const POINTS_PER_QUESTION = 1; // POINTS_PER_PART value
-const MAX_POSSIBLE = TOTAL_QUESTIONS * POINTS_PER_QUESTION;
-const MATCH_THRESHOLD = 75; // below this → no match
+  const top3     = topHeroes(3);
+  const primary  = top3[0] ?? null;
+  const runners  = top3.slice(1);
+  const heroMeta = primary ? (HERO_CATALOGUE[primary.hero] ?? FALLBACK_HERO) : FALLBACK_HERO;
 
-const matchPct = primary && primary.score > 0
-  ? Math.min(100, Math.round((primary.score / MAX_POSSIBLE) * 100))
-  : 0;
+  // Per-hero ceiling — a hero appearing in 14 questions has a max of 14, not 18.
+  const primaryMaxScore = primary ? (maxScoreMap[primary.hero] ?? 1) : 1;
+
+  // FIX: guard against divide-by-zero and clamp to 100.
+  const matchPct =
+    primary && primary.score > 0 && primaryMaxScore > 0
+      ? Math.min(100, Math.round((primary.score / primaryMaxScore) * 100))
+      : 0;
 
   // ── Animations ───────────────────────────────────────────────────────────
   const contentFade   = useRef(new Animated.Value(0)).current;
@@ -726,16 +725,11 @@ const matchPct = primary && primary.score > 0
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(portraitFade, { toValue: 1, duration: 700, useNativeDriver: true }),
-      Animated.spring(portraitScale, { toValue: 1, tension: 50, friction: 8, useNativeDriver: true }),
-      Animated.timing(contentFade, { toValue: 1, duration: 600, delay: 300, useNativeDriver: true }),
-      Animated.spring(contentSlide, { toValue: 0, delay: 300, tension: 55, useNativeDriver: true }),
-      Animated.timing(scoreAnim, {
-        toValue: matchPct,
-        duration: 1200,
-        delay: 500,
-        useNativeDriver: false,
-      }),
+      Animated.timing(portraitFade,  { toValue: 1,        duration: 700,  useNativeDriver: true  }),
+      Animated.spring(portraitScale, { toValue: 1,        tension: 50,    friction: 8, useNativeDriver: true }),
+      Animated.timing(contentFade,   { toValue: 1,        duration: 600,  delay: 300,  useNativeDriver: true }),
+      Animated.spring(contentSlide,  { toValue: 0,        delay: 300,     tension: 55, useNativeDriver: true }),
+      Animated.timing(scoreAnim,     { toValue: matchPct, duration: 1200, delay: 500,  useNativeDriver: false }),
     ]).start();
   }, [matchPct]);
 
@@ -753,6 +747,11 @@ const matchPct = primary && primary.score > 0
     resetScores();
     navigation.navigate('PersonalityTest');
   };
+
+  // FIX: when matchPct is 0 the interpolation input range must not be [0, 0].
+  // Use a safe upper bound of Math.max(matchPct, 1) only for the input range;
+  // the output always maps correctly to '0%'–'<matchPct>%'.
+  const scoreAnimInputMax = Math.max(matchPct, 1);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -773,7 +772,12 @@ const matchPct = primary && primary.score > 0
         showsVerticalScrollIndicator={false}
       >
         {/* ── Portrait card ── */}
-        <Animated.View style={[styles.portraitCard, { opacity: portraitFade, transform: [{ scale: portraitScale }] }]}>
+        <Animated.View
+          style={[
+            styles.portraitCard,
+            { opacity: portraitFade, transform: [{ scale: portraitScale }] },
+          ]}
+        >
           <View style={[styles.corner, styles.cornerTL]} />
           <View style={[styles.corner, styles.cornerTR]} />
           <View style={[styles.corner, styles.cornerBL]} />
@@ -835,7 +839,7 @@ const matchPct = primary && primary.score > 0
             </View>
             <Animated.Text style={styles.matchScore}>
               {scoreAnim.interpolate({
-                inputRange: [0, Math.max(matchPct, 1)],
+                inputRange:  [0, scoreAnimInputMax],
                 outputRange: ['0%', `${matchPct}%`],
               })}
             </Animated.Text>
@@ -846,7 +850,7 @@ const matchPct = primary && primary.score > 0
                 styles.matchBarFill,
                 {
                   width: scoreAnim.interpolate({
-                    inputRange: [0, 100],
+                    inputRange:  [0, 100],
                     outputRange: ['0%', '100%'],
                   }),
                 },
@@ -899,7 +903,7 @@ const matchPct = primary && primary.score > 0
                   key={r.hero}
                   heroKey={r.hero}
                   score={r.score}
-                  maxScore={MAX_POSSIBLE}
+                  maxScore={maxScoreMap[r.hero] ?? 1}
                 />
               ))}
             </View>
@@ -924,7 +928,11 @@ const matchPct = primary && primary.score > 0
             onPress={hasMatch ? () => navigation.navigate('MainTabs') : handleRetake}
             activeOpacity={0.85}
           >
-            <Icon name={hasMatch ? 'bookmark' : 'repeat'} size={15} color={COLORS.textContrast} />
+            <Icon
+              name={hasMatch ? 'bookmark' : 'repeat'}
+              size={15}
+              color={COLORS.textContrast}
+            />
             <Text style={styles.primaryBtnText}>
               {hasMatch ? ' I-save sa Koleksyon' : ' Ulit-Araling'}
             </Text>
@@ -951,32 +959,24 @@ const matchPct = primary && primary.score > 0
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: COLORS.background, paddingTop: 12 },
-  scroll: { flex: 1 },
+  root:          { flex: 1, backgroundColor: COLORS.background, paddingTop: 12 },
+  scroll:        { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 8 },
 
   // ── Portrait card ──
   portraitCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: COLORS.secondary,
-    alignItems: 'center',
-    paddingVertical: 28,
-    paddingHorizontal: 20,
-    marginBottom: 16,
-    position: 'relative',
-    elevation: 4,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
+    borderRadius: 24, borderWidth: 2, borderColor: COLORS.secondary,
+    alignItems: 'center', paddingVertical: 28, paddingHorizontal: 20,
+    marginBottom: 16, position: 'relative', elevation: 4,
+    shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12, shadowRadius: 8,
   },
-  corner: { position: 'absolute', width: 20, height: 20 },
-  cornerTL: { top: 10, left: 10, borderTopWidth: 2, borderLeftWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
-  cornerTR: { top: 10, right: 10, borderTopWidth: 2, borderRightWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
-  cornerBL: { bottom: 10, left: 10, borderBottomWidth: 2, borderLeftWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
-  cornerBR: { bottom: 10, right: 10, borderBottomWidth: 2, borderRightWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
+  corner:    { position: 'absolute', width: 20, height: 20 },
+  cornerTL:  { top: 10,    left: 10,  borderTopWidth: 2,    borderLeftWidth: 2,  borderColor: COLORS.primaryLight, borderRadius: 2 },
+  cornerTR:  { top: 10,    right: 10, borderTopWidth: 2,    borderRightWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
+  cornerBL:  { bottom: 10, left: 10,  borderBottomWidth: 2, borderLeftWidth: 2,  borderColor: COLORS.primaryLight, borderRadius: 2 },
+  cornerBR:  { bottom: 10, right: 10, borderBottomWidth: 2, borderRightWidth: 2, borderColor: COLORS.primaryLight, borderRadius: 2 },
   heroTag: {
     position: 'absolute', top: 14, right: 36,
     backgroundColor: COLORS.primary,
@@ -1010,30 +1010,30 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08, shadowRadius: 6,
   },
-  cardOrnRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  cardOrnLine: { flex: 1, height: 1, backgroundColor: COLORS.secondary },
-  cardOrnStar: { color: COLORS.primaryLight, fontSize: 9 },
-  heroName: { fontFamily: FONTS.kawitBold, fontSize: 28, color: COLORS.primary, textAlign: 'center', marginBottom: 4 },
-  heroTagline: { fontFamily: FONTS.PoppinsRegular, fontSize: 11, color: COLORS.primaryLight, textAlign: 'center', letterSpacing: 1, marginBottom: 18 },
+  cardOrnRow:   { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  cardOrnLine:  { flex: 1, height: 1, backgroundColor: COLORS.secondary },
+  cardOrnStar:  { color: COLORS.primaryLight, fontSize: 9 },
+  heroName:     { fontFamily: FONTS.kawitBold, fontSize: 28, color: COLORS.primary, textAlign: 'center', marginBottom: 4 },
+  heroTagline:  { fontFamily: FONTS.PoppinsRegular, fontSize: 11, color: COLORS.primaryLight, textAlign: 'center', letterSpacing: 1, marginBottom: 18 },
 
-  matchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  matchRow:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   matchLabelRow: { flexDirection: 'row', alignItems: 'center' },
-  matchLabel: { fontFamily: FONTS.PoppinsBold, fontSize: 10, color: COLORS.textSecondary, letterSpacing: 1.2 },
-  matchScore: { fontFamily: FONTS.kawitBold, fontSize: 16, color: COLORS.primary },
+  matchLabel:    { fontFamily: FONTS.PoppinsBold, fontSize: 10, color: COLORS.textSecondary, letterSpacing: 1.2 },
+  matchScore:    { fontFamily: FONTS.kawitBold, fontSize: 16, color: COLORS.primary },
   matchBarBg: {
     height: 8, borderRadius: 4, backgroundColor: COLORS.background,
     borderWidth: 1, borderColor: COLORS.secondary, overflow: 'hidden', marginBottom: 16,
   },
-  matchBarFill: { height: '100%', borderRadius: 4, backgroundColor: COLORS.primary, overflow: 'hidden' },
-  matchSheen: { position: 'absolute', top: 0, left: 0, right: 0, height: '40%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 4 },
+  matchBarFill:    { height: '100%', borderRadius: 4, backgroundColor: COLORS.primary, overflow: 'hidden' },
+  matchSheen:      { position: 'absolute', top: 0, left: 0, right: 0, height: '40%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 4 },
   heroDescription: { fontFamily: FONTS.PoppinsRegular, fontSize: 13, color: COLORS.textSecondary, lineHeight: 21, textAlign: 'center' },
 
   // ── Traits ──
   traitsSection: { marginBottom: 14 },
   sectionHeader: { marginBottom: 12 },
-  sectionBay: { fontFamily: FONTS.baybayin, fontSize: 10, color: COLORS.primaryLight, letterSpacing: 3, marginBottom: -1 },
-  sectionTitle: { fontFamily: FONTS.kawitBold, fontSize: 17, color: COLORS.primary },
-  traitsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  sectionBay:    { fontFamily: FONTS.baybayin, fontSize: 10, color: COLORS.primaryLight, letterSpacing: 3, marginBottom: -1 },
+  sectionTitle:  { fontFamily: FONTS.kawitBold, fontSize: 17, color: COLORS.primary },
+  traitsGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   traitBadge: {
     flexBasis: '47%', flexGrow: 1,
     backgroundColor: COLORS.surface, borderRadius: 14,
@@ -1046,12 +1046,12 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: COLORS.secondary,
     alignItems: 'center', justifyContent: 'center',
   },
-  traitLabel: { fontFamily: FONTS.PoppinsBold, fontSize: 12, color: COLORS.primary },
+  traitLabel:    { fontFamily: FONTS.PoppinsBold,   fontSize: 12, color: COLORS.primary    },
   traitSublabel: { fontFamily: FONTS.PoppinsRegular, fontSize: 10, color: COLORS.textSecondary },
 
   // ── Runner-ups ──
   runnersSection: { marginBottom: 14 },
-  runnersRow: { flexDirection: 'row', gap: 10 },
+  runnersRow:     { flexDirection: 'row', gap: 10 },
   runnerUpBadge: {
     flex: 1, backgroundColor: COLORS.surface,
     borderRadius: 14, borderWidth: 1.5, borderColor: COLORS.secondary,
@@ -1063,23 +1063,23 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: COLORS.secondary,
   },
   runnerUpTagText: { fontFamily: FONTS.PoppinsBold, fontSize: 7, color: COLORS.primaryLight, letterSpacing: 1.2 },
-  runnerUpName: { fontFamily: FONTS.kawitBold, fontSize: 12, color: COLORS.primary, textAlign: 'center' },
-  runnerUpBarBg: { width: '100%', height: 5, borderRadius: 3, backgroundColor: COLORS.background, borderWidth: 1, borderColor: COLORS.secondary, overflow: 'hidden' },
+  runnerUpName:    { fontFamily: FONTS.kawitBold, fontSize: 12, color: COLORS.primary, textAlign: 'center' },
+  runnerUpBarBg:   { width: '100%', height: 5, borderRadius: 3, backgroundColor: COLORS.background, borderWidth: 1, borderColor: COLORS.secondary, overflow: 'hidden' },
   runnerUpBarFill: { height: '100%', borderRadius: 3, backgroundColor: COLORS.primaryLight },
-  runnerUpPct: { fontFamily: FONTS.PoppinsBold, fontSize: 10, color: COLORS.textSecondary },
+  runnerUpPct:     { fontFamily: FONTS.PoppinsBold, fontSize: 10, color: COLORS.textSecondary },
 
   // ── Actions ──
   actionsWrap: { gap: 10 },
-  ctaOrnRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  ornLine: { flex: 1, height: 1, backgroundColor: COLORS.secondary },
-  ctaOrnText: { fontFamily: FONTS.PoppinsBold, fontSize: 8, color: COLORS.primaryLight, letterSpacing: 1.5 },
+  ctaOrnRow:   { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  ornLine:     { flex: 1, height: 1, backgroundColor: COLORS.secondary },
+  ctaOrnText:  { fontFamily: FONTS.PoppinsBold, fontSize: 8, color: COLORS.primaryLight, letterSpacing: 1.5 },
   primaryBtn: {
     backgroundColor: COLORS.primary, borderRadius: 50, paddingVertical: 16,
     alignItems: 'center', flexDirection: 'row', justifyContent: 'center',
     borderWidth: 1, borderColor: COLORS.primaryLight,
   },
   primaryBtnText: { color: COLORS.textContrast, fontFamily: FONTS.PoppinsBold, fontSize: 15, letterSpacing: 0.5 },
-  secondaryRow: { flexDirection: 'row', gap: 10 },
+  secondaryRow:   { flexDirection: 'row', gap: 10 },
   secondaryBtn: {
     flex: 1, backgroundColor: COLORS.surface, borderRadius: 50, paddingVertical: 14,
     alignItems: 'center', flexDirection: 'row', justifyContent: 'center',

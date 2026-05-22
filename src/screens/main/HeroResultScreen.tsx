@@ -711,6 +711,7 @@ export default function HeroResultScreen({ route, navigation }: Props) {
 const TOTAL_QUESTIONS = 18; // your allQuestions.length
 const POINTS_PER_QUESTION = 1; // POINTS_PER_PART value
 const MAX_POSSIBLE = TOTAL_QUESTIONS * POINTS_PER_QUESTION;
+const MATCH_THRESHOLD = 75; // below this → no match
 
 const matchPct = primary && primary.score > 0
   ? Math.min(100, Math.round((primary.score / MAX_POSSIBLE) * 100))
@@ -737,6 +738,8 @@ const matchPct = primary && primary.score > 0
       }),
     ]).start();
   }, [matchPct]);
+
+  const hasMatch = matchPct >= MATCH_THRESHOLD;
 
   const handleShare = async () => {
     try {
@@ -770,33 +773,37 @@ const matchPct = primary && primary.score > 0
         showsVerticalScrollIndicator={false}
       >
         {/* ── Portrait card ── */}
-        <Animated.View
-          style={[
-            styles.portraitCard,
-            { opacity: portraitFade, transform: [{ scale: portraitScale }] },
-          ]}
-        >
+        <Animated.View style={[styles.portraitCard, { opacity: portraitFade, transform: [{ scale: portraitScale }] }]}>
           <View style={[styles.corner, styles.cornerTL]} />
           <View style={[styles.corner, styles.cornerTR]} />
           <View style={[styles.corner, styles.cornerBL]} />
           <View style={[styles.corner, styles.cornerBR]} />
 
           <View style={styles.heroTag}>
-            <Text style={styles.heroTagText}>{heroMeta.tag}</Text>
+            <Text style={styles.heroTagText}>
+              {hasMatch ? heroMeta.tag : 'WALANG TUGMA'}
+            </Text>
           </View>
 
-          {imageUrl ? (
-            <Image source={{ uri: imageUrl }} style={styles.portraitImage} />
+          {hasMatch ? (
+            imageUrl ? (
+              <Image source={{ uri: imageUrl }} style={styles.portraitImage} />
+            ) : (
+              <View style={styles.portraitPlaceholder}>
+                <Icon name="user-circle" size={72} color={COLORS.primaryLight} />
+                <Text style={styles.portraitPlaceholderLabel}>AI Transformed Image</Text>
+              </View>
+            )
           ) : (
             <View style={styles.portraitPlaceholder}>
-              <Icon name="user-circle" size={72} color={COLORS.primaryLight} />
-              <Text style={styles.portraitPlaceholderLabel}>AI Transformed Image</Text>
+              <Icon name="question-circle" size={72} color={COLORS.textSecondary} />
+              <Text style={styles.portraitPlaceholderLabel}>Walang Katugmang Bayani</Text>
             </View>
           )}
 
           <View style={styles.eraBadge}>
             <Icon name="calendar" size={10} color={COLORS.primaryLight} />
-            <Text style={styles.eraText}> {heroMeta.era}</Text>
+            <Text style={styles.eraText}> {hasMatch ? heroMeta.era : '—'}</Text>
           </View>
         </Animated.View>
 
@@ -813,8 +820,12 @@ const matchPct = primary && primary.score > 0
             <View style={styles.cardOrnLine} />
           </View>
 
-          <Text style={styles.heroName}>{heroMeta.name}</Text>
-          <Text style={styles.heroTagline}>{heroMeta.tagline}</Text>
+          <Text style={styles.heroName}>
+            {hasMatch ? heroMeta.name : 'Walang Katugmang Bayani'}
+          </Text>
+          <Text style={styles.heroTagline}>
+            {hasMatch ? heroMeta.tagline : 'No hero matched your profile'}
+          </Text>
 
           {/* Match score bar */}
           <View style={styles.matchRow}>
@@ -845,7 +856,11 @@ const matchPct = primary && primary.score > 0
             </Animated.View>
           </View>
 
-          <Text style={styles.heroDescription}>{heroMeta.description}</Text>
+          <Text style={styles.heroDescription}>
+            {hasMatch
+              ? heroMeta.description
+              : 'Your answers did not align closely enough with any single hero. Try retaking the assessment to get a stronger match — your bayani is still out there.'}
+          </Text>
         </Animated.View>
 
         {/* ── Traits grid ── */}
@@ -867,7 +882,7 @@ const matchPct = primary && primary.score > 0
         </Animated.View>
 
         {/* ── Runner-up heroes (positions 2 & 3) ── */}
-        {runners.length > 0 && (
+        {hasMatch && runners.length > 0 && (
           <Animated.View
             style={[
               styles.runnersSection,
@@ -906,11 +921,13 @@ const matchPct = primary && primary.score > 0
 
           <TouchableOpacity
             style={styles.primaryBtn}
-            onPress={() => navigation.navigate('MainTabs')}
+            onPress={hasMatch ? () => navigation.navigate('MainTabs') : handleRetake}
             activeOpacity={0.85}
           >
-            <Icon name="bookmark" size={15} color={COLORS.textContrast} />
-            <Text style={styles.primaryBtnText}> I-save sa Koleksyon</Text>
+            <Icon name={hasMatch ? 'bookmark' : 'repeat'} size={15} color={COLORS.textContrast} />
+            <Text style={styles.primaryBtnText}>
+              {hasMatch ? ' I-save sa Koleksyon' : ' Ulit-Araling'}
+            </Text>
           </TouchableOpacity>
 
           <View style={styles.secondaryRow}>

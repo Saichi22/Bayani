@@ -35,8 +35,8 @@ const HOW_IT_WORKS = [
   {
     id: '2',
     iconName: 'shield',
-    title: 'Choose Your Path',
-    body: 'Choose between courage in combat or wisdom in command.',
+    title: 'Where it all began',
+    body: 'Where was your first step on the path of heroism? ',
   },
   {
     id: '3',
@@ -213,15 +213,11 @@ function AssessmentScreen() {
         </View>
 
         <TouchableOpacity style={styles.avatarBtn} onPress={handleLogout}>
-          {user?.photo ? (
-            <Image source={{ uri: user.photo }} style={styles.avatarImage} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Text style={styles.avatarInitial}>
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
-              </Text>
-            </View>
-          )}
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarInitial}>
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -238,11 +234,7 @@ function AssessmentScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* ── Hero Banner ── */}
-        <ImageBackground
-          source={require('../../assets/images/bayaniPortrait.png')}
-          style={styles.heroBanner}
-          resizeMode="cover"
-        >
+        <ImageBackground style={styles.heroBanner} resizeMode="cover">
           <View style={styles.bannerOverlayDark} />
           <View style={styles.bannerOverlayColor} />
 
@@ -284,8 +276,8 @@ function AssessmentScreen() {
           <View style={styles.statsPillRow}>
             {[
               { icon: 'clock-o', value: '5 min', label: 'Duration' },
-              { icon: 'list-ul', value: '5', label: 'Questions' },
-              { icon: 'users', value: '150+', label: 'Heroes' },
+              { icon: 'list-ul', value: '18', label: 'Questions' },
+              { icon: 'users', value: '40+', label: 'Heroes' },
             ].map((s, i) => (
               <View key={i} style={styles.statPill}>
                 <Icon name={s.icon} size={13} color={COLORS.primaryLight} />

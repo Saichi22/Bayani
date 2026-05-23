@@ -74,22 +74,49 @@ function OptionButton({
   });
 
   const handlePressIn = () =>
-    Animated.spring(scale, { toValue: 0.97, useNativeDriver: true, tension: 120 }).start();
+    Animated.spring(scale, {
+      toValue: 0.97,
+      useNativeDriver: true,
+      tension: 120,
+    }).start();
   const handlePressOut = () =>
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, tension: 80 }).start();
-  
-
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 80,
+    }).start();
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <TouchableOpacity activeOpacity={1} onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <Animated.View style={[styles.optionButton, { borderColor, backgroundColor: bgColor }]}>
-          <View style={[styles.optionBadge, selected && styles.optionBadgeSelected]}>
-            <Text style={[styles.optionBadgeText, selected && styles.optionBadgeTextSelected]}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Animated.View
+          style={[
+            styles.optionButton,
+            { borderColor, backgroundColor: bgColor },
+          ]}
+        >
+          <View
+            style={[styles.optionBadge, selected && styles.optionBadgeSelected]}
+          >
+            <Text
+              style={[
+                styles.optionBadgeText,
+                selected && styles.optionBadgeTextSelected,
+              ]}
+            >
               {label}
             </Text>
           </View>
-          <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{text}</Text>
+          <Text
+            style={[styles.optionText, selected && styles.optionTextSelected]}
+          >
+            {text}
+          </Text>
           {selected && (
             <View style={styles.checkWrap}>
               <Icon name="check" size={11} color={COLORS.primary} />
@@ -120,8 +147,17 @@ function QuestionCard({
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeIn, { toValue: 1, duration: 400, delay: (globalIndex % 6) * 80, useNativeDriver: true }),
-      Animated.spring(slideIn, { toValue: 0, delay: (globalIndex % 6) * 80, useNativeDriver: true }),
+      Animated.timing(fadeIn, {
+        toValue: 1,
+        duration: 400,
+        delay: (globalIndex % 6) * 80,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideIn, {
+        toValue: 0,
+        delay: (globalIndex % 6) * 80,
+        useNativeDriver: true,
+      }),
     ]).start();
   }, []);
 
@@ -129,26 +165,46 @@ function QuestionCard({
   const optionTexts = OPTION_LABELS[question.id] ?? {};
 
   return (
-    <Animated.View style={[styles.questionRow, { opacity: fadeIn, transform: [{ translateY: slideIn }] }]}>
+    <Animated.View
+      style={[
+        styles.questionRow,
+        { opacity: fadeIn, transform: [{ translateY: slideIn }] },
+      ]}
+    >
       <View style={styles.sideColumn}>
-        <View style={[styles.numberCircle, isAnswered && styles.numberCircleAnswered]}>
-          {isAnswered
-            ? <Icon name="check" size={14} color={COLORS.textContrast} />
-            : <Text style={styles.numberText}>{globalIndex + 1}</Text>
-          }
+        <View
+          style={[
+            styles.numberCircle,
+            isAnswered && styles.numberCircleAnswered,
+          ]}
+        >
+          {isAnswered ? (
+            <Icon name="check" size={14} color={COLORS.textContrast} />
+          ) : (
+            <Text style={styles.numberText}>{globalIndex + 1}</Text>
+          )}
         </View>
         {!isLast && <View style={styles.dottedLine} />}
       </View>
 
       <View style={styles.cardColumn}>
-        <View style={[styles.questionCard, isAnswered && styles.questionCardAnswered]}>
+        <View
+          style={[
+            styles.questionCard,
+            isAnswered && styles.questionCardAnswered,
+          ]}
+        >
           <View style={styles.cardOrnamentRow}>
             <View style={styles.cardAccentBar} />
             <Text style={styles.cardBaybayin}>ᜊᜌᜈᜒ</Text>
           </View>
 
           <Text style={styles.questionLabel}>
-            <Icon name="question-circle" size={10} color={COLORS.primaryLight} />{' '}
+            <Icon
+              name="question-circle"
+              size={10}
+              color={COLORS.primaryLight}
+            />{' '}
             Tanong {globalIndex + 1}
           </Text>
           <Text style={styles.questionText}>{question.question}</Text>
@@ -172,7 +228,15 @@ function QuestionCard({
 }
 
 // ── Part Section Header ───────────────────────────────────────────────────────
-function PartHeader({ label, subtitle, partIndex }: { label: string; subtitle: string; partIndex: number }) {
+function PartHeader({
+  label,
+  subtitle,
+  partIndex,
+}: {
+  label: string;
+  subtitle: string;
+  partIndex: number;
+}) {
   return (
     <View style={styles.partHeader}>
       <View style={styles.partHeaderLeft}>
@@ -202,17 +266,34 @@ function StepIndicator({
   return (
     <React.Fragment>
       <View style={styles.stepItem}>
-        <View style={[styles.stepCircle, isActive && styles.stepCircleActive, isCompleted && styles.stepCircleCompleted]}>
+        <View
+          style={[
+            styles.stepCircle,
+            isActive && styles.stepCircleActive,
+            isCompleted && styles.stepCircleCompleted,
+          ]}
+        >
           <Icon
             name={isCompleted ? 'check' : step.iconName}
             size={13}
-            color={isActive || isCompleted ? COLORS.textContrast : COLORS.textSecondary}
+            color={
+              isActive || isCompleted
+                ? COLORS.textContrast
+                : COLORS.textSecondary
+            }
           />
         </View>
-        <Text style={[styles.stepLabel, isActive && styles.stepLabelActive]}>{step.label}</Text>
+        <Text style={[styles.stepLabel, isActive && styles.stepLabelActive]}>
+          {step.label}
+        </Text>
       </View>
       {!isLast && (
-        <View style={[styles.stepConnector, isCompleted && styles.stepConnectorCompleted]} />
+        <View
+          style={[
+            styles.stepConnector,
+            isCompleted && styles.stepConnectorCompleted,
+          ]}
+        />
       )}
     </React.Fragment>
   );
@@ -226,16 +307,22 @@ export default function PersonalityTestScreen({ navigation }: Props) {
   const headerSlide = useRef(new Animated.Value(-20)).current;
   const { submitScreen, resetScores } = useHeroScoring();
 
-  
-
-useEffect(() => {
-  resetScores();
-}, []);
+  useEffect(() => {
+    resetScores();
+  }, []);
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(headerFade, { toValue: 1, duration: 600, useNativeDriver: true }),
-      Animated.spring(headerSlide, { toValue: 0, tension: 60, useNativeDriver: true }),
+      Animated.timing(headerFade, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.spring(headerSlide, {
+        toValue: 0,
+        tension: 60,
+        useNativeDriver: true,
+      }),
     ]).start();
   }, []);
 
@@ -254,15 +341,27 @@ useEffect(() => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} translucent={false} />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background}
+        translucent={false}
+      />
       <ImageBackground
         source={bayaniBackground}
         style={styles.backgroundImage}
         imageStyle={styles.backgroundImageStyle}
       >
         {/* ── Header ── */}
-        <Animated.View style={[styles.header, { opacity: headerFade, transform: [{ translateY: headerSlide }] }]}>
-          <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
+        <Animated.View
+          style={[
+            styles.header,
+            { opacity: headerFade, transform: [{ translateY: headerSlide }] },
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.backCircle}
+            onPress={() => navigation.goBack()}
+          >
             <Icon name="arrow-left" size={16} color={COLORS.primary} />
           </TouchableOpacity>
 
@@ -270,18 +369,29 @@ useEffect(() => {
             <Text style={styles.headerBaybayin}>ᜉᜋᜈ</Text>
             <Text style={styles.headerTitle}>PAGSUBOK</Text>
             <Text style={styles.headerSub}>
-              <Icon name="star" size={8} color={COLORS.primaryLight} /> Bayani Assessment{' '}
+              <Icon name="star" size={8} color={COLORS.primaryLight} /> Bayani
+              Assessment{' '}
               <Icon name="star" size={8} color={COLORS.primaryLight} />
             </Text>
           </View>
 
           <TouchableOpacity
-            style={[styles.submitButton, !allAnswered && styles.submitButtonDisabled]}
+            style={[
+              styles.submitButton,
+              !allAnswered && styles.submitButtonDisabled,
+            ]}
             onPress={handleSubmit}
             disabled={!allAnswered}
           >
-            <Icon name="send" size={13} color={allAnswered ? COLORS.textContrast : COLORS.textSecondary} />
-            <Text style={[styles.submitText, !allAnswered && styles.submitTextDisabled]}> Isumite</Text>
+            <Text
+              style={[
+                styles.submitText,
+                !allAnswered && styles.submitTextDisabled,
+              ]}
+            >
+              {' '}
+              Susunod
+            </Text>
           </TouchableOpacity>
         </Animated.View>
 
@@ -313,13 +423,21 @@ useEffect(() => {
             </Text>
           </View>
           <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: `${progressPercentage}%` as any }]}>
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${progressPercentage}%` as any },
+              ]}
+            >
               <View style={styles.progressSheen} />
             </View>
           </View>
           <View style={styles.tickRow}>
             {allQuestions.map((_, i) => (
-              <View key={i} style={[styles.tick, i < answeredCount && styles.tickAnswered]} />
+              <View
+                key={i}
+                style={[styles.tick, i < answeredCount && styles.tickAnswered]}
+              />
             ))}
           </View>
         </View>
@@ -342,11 +460,18 @@ useEffect(() => {
             const partQuestions = allQuestions.filter(q => q.part === part.id);
             return (
               <View key={part.id}>
-                <PartHeader label={part.label} subtitle={part.subtitle} partIndex={partIndex} />
+                <PartHeader
+                  label={part.label}
+                  subtitle={part.subtitle}
+                  partIndex={partIndex}
+                />
 
                 {partQuestions.map((question, qIndexInPart) => {
-                  const globalIndex = allQuestions.findIndex(q => q.id === question.id);
-                  const isLastInPart = qIndexInPart === partQuestions.length - 1;
+                  const globalIndex = allQuestions.findIndex(
+                    q => q.id === question.id,
+                  );
+                  const isLastInPart =
+                    qIndexInPart === partQuestions.length - 1;
                   const isLastOverall = globalIndex === allQuestions.length - 1;
                   return (
                     <QuestionCard
@@ -379,7 +504,11 @@ useEffect(() => {
                 <Text style={styles.ctaOrnamentText}>✦ HANDA NA ✦</Text>
                 <View style={styles.dividerLine} />
               </View>
-              <TouchableOpacity style={styles.ctaBtn} onPress={handleSubmit} activeOpacity={0.85}>
+              <TouchableOpacity
+                style={styles.ctaBtn}
+                onPress={handleSubmit}
+                activeOpacity={0.85}
+              >
                 <Text style={styles.ctaBtnText}> Ihayag ang Aking Bayani</Text>
               </TouchableOpacity>
             </Animated.View>
@@ -398,7 +527,7 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   backgroundImage: { flex: 1, paddingTop: 12 },
-  backgroundImageStyle: { opacity: 0.70, resizeMode: 'cover' },
+  backgroundImageStyle: { opacity: 0.7, resizeMode: 'cover' },
 
   baybayinStrip: { backgroundColor: COLORS.primary, paddingVertical: 5 },
   baybayinText: {
@@ -420,99 +549,172 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   backCircle: {
-    width: 42, height: 42, borderRadius: 21,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: COLORS.surface,
-    borderWidth: 1.5, borderColor: COLORS.secondary,
-    justifyContent: 'center', alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerCenter: { alignItems: 'center' },
   headerBaybayin: {
-    fontFamily: FONTS.baybayin, fontSize: 10,
-    color: COLORS.primaryLight, letterSpacing: 3, marginBottom: -2,
+    fontFamily: FONTS.baybayin,
+    fontSize: 10,
+    color: COLORS.primaryLight,
+    letterSpacing: 3,
+    marginBottom: -2,
   },
   headerTitle: {
-    fontFamily: FONTS.kawitBold, fontSize: 18,
-    letterSpacing: 5, color: COLORS.primary,
+    fontFamily: FONTS.kawitBold,
+    fontSize: 18,
+    letterSpacing: 5,
+    color: COLORS.primary,
   },
   headerSub: {
-    fontFamily: FONTS.PoppinsRegular, fontSize: 9,
-    color: COLORS.textSecondary, letterSpacing: 1.5, marginTop: 2,
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 9,
+    color: COLORS.textSecondary,
+    letterSpacing: 1.5,
+    marginTop: 2,
   },
   submitButton: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 16, paddingVertical: 10,
-    borderRadius: 22, backgroundColor: COLORS.primary,
-    borderWidth: 1, borderColor: COLORS.primaryLight,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 22,
+    backgroundColor: COLORS.primary,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
   },
-  submitButtonDisabled: { backgroundColor: COLORS.surface, borderColor: COLORS.secondary },
+  submitButtonDisabled: {
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.secondary,
+  },
   submitText: {
-    color: COLORS.textContrast, fontFamily: FONTS.PoppinsBold,
-    fontSize: 12, letterSpacing: 0.3,
+    color: COLORS.textContrast,
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 12,
+    letterSpacing: 0.3,
   },
   submitTextDisabled: { color: COLORS.textSecondary },
 
   stepsContainer: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 22, paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 22,
+    paddingVertical: 14,
     backgroundColor: COLORS.surface,
-    borderBottomWidth: 1, borderBottomColor: COLORS.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.secondary,
   },
   stepItem: { alignItems: 'center', gap: 5 },
   stepCircle: {
-    width: 34, height: 34, borderRadius: 17,
-    borderWidth: 1.5, borderColor: COLORS.secondary,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
     backgroundColor: COLORS.background,
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  stepCircleActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  stepCircleCompleted: { backgroundColor: COLORS.primaryLight, borderColor: COLORS.primaryLight },
+  stepCircleActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  stepCircleCompleted: {
+    backgroundColor: COLORS.primaryLight,
+    borderColor: COLORS.primaryLight,
+  },
   stepLabel: {
-    fontFamily: FONTS.PoppinsRegular, fontSize: 8,
-    color: COLORS.textSecondary, letterSpacing: 0.5, textAlign: 'center',
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 8,
+    color: COLORS.textSecondary,
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
   stepLabelActive: { color: COLORS.primary, fontFamily: FONTS.PoppinsBold },
   stepConnector: {
-    flex: 1, height: 1.5, backgroundColor: COLORS.secondary,
-    marginHorizontal: 4, marginBottom: 18,
+    flex: 1,
+    height: 1.5,
+    backgroundColor: COLORS.secondary,
+    marginHorizontal: 4,
+    marginBottom: 18,
   },
   stepConnectorCompleted: { backgroundColor: COLORS.primary },
 
   progressContainer: {
-    paddingHorizontal: 18, paddingTop: 14, paddingBottom: 10,
+    paddingHorizontal: 18,
+    paddingTop: 14,
+    paddingBottom: 10,
     backgroundColor: COLORS.background,
   },
   progressMeta: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   progressLabelRow: { flexDirection: 'row', alignItems: 'center' },
   progressLabel: {
-    fontFamily: FONTS.PoppinsBold, fontSize: 10,
-    color: COLORS.textSecondary, letterSpacing: 1.5, textTransform: 'uppercase',
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 10,
+    color: COLORS.textSecondary,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
   },
-  progressCount: { fontFamily: FONTS.kawitBold, fontSize: 15, color: COLORS.primary },
-  progressTotal: { fontFamily: FONTS.PoppinsRegular, color: COLORS.textSecondary, fontSize: 13 },
+  progressCount: {
+    fontFamily: FONTS.kawitBold,
+    fontSize: 15,
+    color: COLORS.primary,
+  },
+  progressTotal: {
+    fontFamily: FONTS.PoppinsRegular,
+    color: COLORS.textSecondary,
+    fontSize: 13,
+  },
   progressBarBg: {
-    height: 8, borderRadius: 4,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: COLORS.surface,
-    borderWidth: 1, borderColor: COLORS.secondary,
-    overflow: 'hidden', marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.secondary,
+    overflow: 'hidden',
+    marginBottom: 8,
   },
   progressBarFill: {
-    height: '100%', borderRadius: 4,
-    backgroundColor: COLORS.primary, overflow: 'hidden',
+    height: '100%',
+    borderRadius: 4,
+    backgroundColor: COLORS.primary,
+    overflow: 'hidden',
   },
   progressSheen: {
-    position: 'absolute', top: 0, left: 0, right: 0,
-    height: '40%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 4,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 4,
   },
   tickRow: { flexDirection: 'row', gap: 3 },
-  tick: { flex: 1, height: 3, borderRadius: 2, backgroundColor: COLORS.secondary },
+  tick: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: COLORS.secondary,
+  },
   tickAnswered: { backgroundColor: COLORS.primaryLight },
 
   ornamentDivider: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 18, paddingVertical: 8, gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    gap: 10,
   },
   dividerLine: { flex: 1, height: 1, backgroundColor: COLORS.secondary },
   dividerStar: { color: COLORS.primaryLight, fontSize: 10 },
@@ -578,97 +780,164 @@ const styles = StyleSheet.create({
   questionRow: { flexDirection: 'row', alignItems: 'flex-start' },
   sideColumn: { width: 44, alignItems: 'center', paddingTop: 2 },
   numberCircle: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: COLORS.surface,
-    borderWidth: 1.5, borderColor: COLORS.secondary,
-    justifyContent: 'center', alignItems: 'center', zIndex: 1,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
-  numberCircleAnswered: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  numberText: { fontFamily: FONTS.kawitBold, fontSize: 15, color: COLORS.textSecondary },
+  numberCircleAnswered: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  numberText: {
+    fontFamily: FONTS.kawitBold,
+    fontSize: 15,
+    color: COLORS.textSecondary,
+  },
   dottedLine: {
-    width: 1.5, flex: 1, minHeight: 32,
-    borderLeftWidth: 1.5, borderLeftColor: COLORS.secondary,
-    borderStyle: 'dashed', marginTop: 6, marginBottom: -6,
+    width: 1.5,
+    flex: 1,
+    minHeight: 32,
+    borderLeftWidth: 1.5,
+    borderLeftColor: COLORS.secondary,
+    borderStyle: 'dashed',
+    marginTop: 6,
+    marginBottom: -6,
   },
 
   cardColumn: { flex: 1, marginLeft: 12 },
   questionCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 20, padding: 18,
-    borderWidth: 1.5, borderColor: COLORS.secondary,
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
     elevation: 2,
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08, shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
-  questionCardAnswered: { borderColor: COLORS.primary, backgroundColor: '#fff8f5' },
+  questionCardAnswered: {
+    borderColor: COLORS.primary,
+    backgroundColor: '#fff8f5',
+  },
   cardOrnamentRow: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between', marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   cardAccentBar: {
-    width: 32, height: 2.5, borderRadius: 2,
-    backgroundColor: COLORS.primaryLight, opacity: 0.7,
+    width: 32,
+    height: 2.5,
+    borderRadius: 2,
+    backgroundColor: COLORS.primaryLight,
+    opacity: 0.7,
   },
   cardBaybayin: {
-    fontFamily: FONTS.baybayin, fontSize: 10,
-    color: COLORS.secondary, letterSpacing: 2,
+    fontFamily: FONTS.baybayin,
+    fontSize: 10,
+    color: COLORS.secondary,
+    letterSpacing: 2,
   },
   questionLabel: {
-    fontFamily: FONTS.PoppinsBold, fontSize: 9,
-    color: COLORS.primaryLight, letterSpacing: 1.5,
-    textTransform: 'uppercase', marginBottom: 6,
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 9,
+    color: COLORS.primaryLight,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+    marginBottom: 6,
   },
   questionText: {
-    fontFamily: FONTS.kawitBold, fontSize: 15,
-    color: COLORS.primary, marginBottom: 16, lineHeight: 23,
+    fontFamily: FONTS.kawitBold,
+    fontSize: 15,
+    color: COLORS.primary,
+    marginBottom: 16,
+    lineHeight: 23,
   },
 
   // ── Options ──
   optionButton: {
-    borderWidth: 1.5, borderRadius: 14, padding: 12,
-    flexDirection: 'row', alignItems: 'center', gap: 10,
+    borderWidth: 1.5,
+    borderRadius: 14,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   optionBadge: {
-    width: 28, height: 28, borderRadius: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 8,
     backgroundColor: COLORS.background,
-    borderWidth: 1.5, borderColor: COLORS.secondary,
-    justifyContent: 'center', alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  optionBadgeSelected: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  optionBadgeText: { fontFamily: FONTS.PoppinsBold, fontSize: 12, color: COLORS.textSecondary },
+  optionBadgeSelected: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  optionBadgeText: {
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 12,
+    color: COLORS.textSecondary,
+  },
   optionBadgeTextSelected: { color: COLORS.textContrast },
   optionText: {
-    flex: 1, fontFamily: FONTS.PoppinsRegular,
-    fontSize: 12, color: COLORS.textSecondary, lineHeight: 18,
+    flex: 1,
+    fontFamily: FONTS.PoppinsRegular,
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
   },
   optionTextSelected: { fontFamily: FONTS.PoppinsBold, color: COLORS.primary },
   checkWrap: {
-    width: 24, height: 24, borderRadius: 12,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: '#fff0ea',
-    justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: COLORS.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.secondary,
   },
 
   // ── Bottom CTA ──
   floatingCta: { marginTop: 24, marginHorizontal: 4 },
   ctaOrnamentRow: {
-    flexDirection: 'row', alignItems: 'center',
-    gap: 10, marginBottom: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 14,
   },
   ctaOrnamentText: {
-    fontFamily: FONTS.PoppinsBold, fontSize: 9,
-    color: COLORS.primaryLight, letterSpacing: 2,
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 9,
+    color: COLORS.primaryLight,
+    letterSpacing: 2,
   },
   ctaBtn: {
     backgroundColor: COLORS.primary,
-    borderRadius: 50, paddingVertical: 16,
-    alignItems: 'center', flexDirection: 'row',
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
-    borderWidth: 1, borderColor: COLORS.primaryLight,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
   },
   ctaBtnText: {
-    color: COLORS.textContrast, fontFamily: FONTS.PoppinsBold,
-    fontSize: 15, letterSpacing: 0.5,
+    color: COLORS.textContrast,
+    fontFamily: FONTS.PoppinsBold,
+    fontSize: 15,
+    letterSpacing: 0.5,
   },
 });

@@ -20,7 +20,7 @@ import { FONTS } from '../../styles/typography';
 import AssessmentHeader from '../../components/AssessmentHeader';
 import { useHeroScoring } from '../../hooks/useHeroScoring';
 import { applyDemographicBonuses } from '../../store/demographicScoring';
-import { sendAssessmentPayload } from '../../services/assessmentPayload'
+import { sendAssessmentPayload } from '../../services/assessmentPayload';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'DemographicProfile'>;
 
@@ -74,7 +74,9 @@ function FieldCard({
   return (
     <View style={[styles.fieldCard, filled && styles.fieldCardFilled]}>
       <View style={styles.fieldHeader}>
-        <View style={[styles.fieldIconWrap, filled && styles.fieldIconWrapFilled]}>
+        <View
+          style={[styles.fieldIconWrap, filled && styles.fieldIconWrapFilled]}
+        >
           <Icon
             name={iconName}
             size={15}
@@ -103,7 +105,7 @@ export default function DemographicProfileScreen({ navigation }: Props) {
   const [ethnicity, setEthnicity] = useState('');
   const [region, setRegion] = useState('');
   const [search, setSearch] = useState('');
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
 
   // ── Scoring hook ──────────────────────────────────────────────────────────
   // heroScores holds the running score map from PersonalityTestScreen.
@@ -134,28 +136,31 @@ export default function DemographicProfileScreen({ navigation }: Props) {
   const canProceed = ethnicity !== '' && region !== '';
 
   const handleSave = async () => {
-  if (!canProceed || isSaving) return;
- 
-  setIsSaving(true);
-  try {
-    // Apply ethnicity + region bonuses to the personality-test scores.
-    const updated = applyDemographicBonuses(heroScores, ethnicity, region);
- 
-    // Commit the merged scores to the store so HeroResultScreen sees them.
-    setHeroScores(updated);
- 
-    // Fire-and-forget: send to backend. We don't block navigation on failure.
-    sendAssessmentPayload(updated, ethnicity, region).then(result => {
-      if (!result.success && __DEV__) {
-        console.warn('[DemographicProfileScreen] Payload send failed:', result.error);
-      }
-    });
- 
-    navigation.navigate('Camera');
-  } finally {
-    setIsSaving(false);
-  }
-};
+    if (!canProceed || isSaving) return;
+
+    setIsSaving(true);
+    try {
+      // Apply ethnicity + region bonuses to the personality-test scores.
+      const updated = applyDemographicBonuses(heroScores, ethnicity, region);
+
+      // Commit the merged scores to the store so HeroResultScreen sees them.
+      setHeroScores(updated);
+
+      // Fire-and-forget: send to backend. We don't block navigation on failure.
+      sendAssessmentPayload(updated, ethnicity, region).then(result => {
+        if (!result.success && __DEV__) {
+          console.warn(
+            '[DemographicProfileScreen] Payload send failed:',
+            result.error,
+          );
+        }
+      });
+
+      navigation.navigate('Camera');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -192,7 +197,10 @@ export default function DemographicProfileScreen({ navigation }: Props) {
           <Animated.View
             style={[
               styles.introCard,
-              { opacity: contentFade, transform: [{ translateY: contentSlide }] },
+              {
+                opacity: contentFade,
+                transform: [{ translateY: contentSlide }],
+              },
             ]}
           >
             <View style={styles.cardOrnRow}>
@@ -201,7 +209,7 @@ export default function DemographicProfileScreen({ navigation }: Props) {
               <View style={styles.cardOrnLine} />
             </View>
             <Text style={styles.introTitle}>
-              Sabihin Mo sa Amin{"\n"}ang Iyong Ugat
+              Sabihin Mo sa Amin{'\n'}ang Iyong Ugat
             </Text>
             <Text style={styles.introBody}>
               Your background helps us find the hero whose story resonates most
@@ -369,7 +377,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   backgroundImageStyle: {
-    opacity: 0.70,
+    opacity: 0.7,
     resizeMode: 'cover',
   },
   scroll: { flex: 1 },

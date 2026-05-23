@@ -153,9 +153,9 @@ function StatsRow() {
   return (
     <View style={styles.statsRow}>
       {[
-        { value: '150+', label: 'Heroes' },
-        { value: '300+', label: 'Events' },
-        { value: '50+', label: 'Regions' },
+        { value: '40+', label: 'Heroes' },
+        { value: '3', label: 'Steps' },
+        { value: '16', label: 'Regions' },
       ].map((s, i) => (
         <View key={i} style={styles.statItem}>
           <Text style={styles.statValue}>{s.value}</Text>
@@ -230,15 +230,11 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <TouchableOpacity style={styles.avatarBtn} onPress={handleLogout}>
-          {user?.photo ? (
-            <Image source={{ uri: user.photo }} style={styles.avatarImage} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Text style={styles.avatarInitial}>
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
-              </Text>
-            </View>
-          )}
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarInitial}>
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -252,11 +248,7 @@ export default function HomeScreen({ navigation }: Props) {
       >
         {/* ── Hero Banner ── */}
         <Animated.View style={{ transform: [{ scale: bannerScale }] }}>
-          <ImageBackground
-            source={require('../../assets/images/bayaniPortrait.png')}
-            style={styles.banner}
-            resizeMode="cover"
-          >
+          <ImageBackground style={styles.banner} resizeMode="cover">
             <View style={styles.bannerOverlayDark} />
             <View style={styles.bannerOverlayColor} />
 
@@ -290,11 +282,11 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
 
             <Text style={styles.discoverTitle}>
-                Discover Your{'\n'}Heritage
+              Discover Your{'\n'}Heritage
             </Text>
             <Text style={styles.discoverBody}>
-                A journey through the history of the Philippines. Meet the
-                heroes who sacrificed their lives for freedom.
+              A journey through the history of the Philippines. Meet the heroes
+              who sacrificed their lives for freedom.
             </Text>
 
             <StatsRow />
